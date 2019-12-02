@@ -11,10 +11,10 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Dell
+ * @author Wibu
  */
 public class DataConnection {
-;
+
  
    
 
