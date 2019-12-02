@@ -11,22 +11,17 @@ import java.sql.SQLException;
 
 /**
  *
- * @author wibu
+ * @author Wibu
  */
 public class DataConnection {
-;
- 
-   
 
- 
-  
-    public static Connection getConnection(String dbURL, String userName, 
+    public static Connection getConnection(String dbURL, String userName,
             String password) throws ClassNotFoundException, SQLException {
         Connection conn = null;
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(dbURL, userName, password);
 //            System.out.println("connect successfully!");
-     
+
         return conn;
     }
 }
