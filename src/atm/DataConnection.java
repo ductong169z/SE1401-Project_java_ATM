@@ -14,12 +14,7 @@ import java.sql.SQLException;
  * @author Wibu
  */
 public class DataConnection {
-;
- 
-   
 
- 
-  
     public static Connection getConnection(String dbURL, String userName, 
             String password) throws ClassNotFoundException, SQLException {
         Connection conn = null;

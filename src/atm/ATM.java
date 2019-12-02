@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-
 /**
  *
  * @author Wibu
@@ -25,12 +24,12 @@ class Auth {
     public Auth() {
     }
 
-    public boolean loginUser() throws SQLException,NullPointerException,ClassNotFoundException {
+    public boolean loginUser() throws SQLException, NullPointerException, ClassNotFoundException {
         Connection conn = DataConnection.getConnection(DB_URL, USER_NAME, PASSWORD);
         Statement stmt = conn.createStatement();
         boolean status = false;
         ResultSet rs = stmt.executeQuery("select * from users");
-      
+
         // show data
         rs.next();
         Scanner input = new Scanner(System.in);
@@ -57,21 +56,14 @@ public class ATM {
         // TODO code application logic here
         Auth auth = new Auth();
         try {
-            if(auth.loginUser()){
+            if (auth.loginUser()) {
                 System.out.println("Login successfully!");
-                    }else{
-            
+            } else {
+
                 System.out.println("Card ID or Pin Incorrect !!");
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
             System.out.println("Can't connect database.");
-        }catch(NullPointerException e){
-                    System.out.println("Can't connect database.");
-
-        }catch(ClassNotFoundException ee){
-                            System.out.println("Can't connect database.");
-
-        
         }
     }
 
