@@ -46,10 +46,6 @@ class Auth {
 
 }
 
-
-
-
-
 public class ATM {
 
     /**
@@ -61,10 +57,6 @@ public class ATM {
         boolean check=false;
         do{
         try {
-            if (auth.loginUser()) {
-                System.out.println("Login successfully!");
-            } else {
-
                 System.out.println("Card ID or Pin Incorrect !!");
             switch (auth.loginUser()) {
                 case 1:
@@ -82,7 +74,7 @@ public class ATM {
                     check=true;
                     break;
             }
-        }} catch (SQLException | NullPointerException | ClassNotFoundException ex) {
+        } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
             System.out.println("Can't connect database.");
         }
         }while(check);
