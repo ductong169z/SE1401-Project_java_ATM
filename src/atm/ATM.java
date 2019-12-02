@@ -47,6 +47,17 @@ class Auth {
 
 }
 
+class Menu {
+    
+    public Menu(){
+        
+    }
+    
+    public void displayUserMenu(){
+        
+    }
+}
+
 public class ATM {
 
     /**
@@ -54,7 +65,6 @@ public class ATM {
      */
     public static void main(String[] args) {
         
-        // new object
         Auth auth = new Auth();
         try {
             if (auth.loginUser()) {
@@ -66,6 +76,8 @@ public class ATM {
         } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
             System.out.println("Can't connect database.");
         }
+        
+        
     }
 
 }
