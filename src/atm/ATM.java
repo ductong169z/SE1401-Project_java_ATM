@@ -24,6 +24,7 @@ class Auth {
     public Auth() {
     }
 
+<<<<<<< Updated upstream
     public boolean loginUser() throws SQLException, NullPointerException, ClassNotFoundException {
         Connection conn = DataConnection.getConnection(DB_URL, USER_NAME, PASSWORD);
         Statement stmt = conn.createStatement();
@@ -53,6 +54,7 @@ public class ATM {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+<<<<<<< Updated upstream
         
         // new object
         Auth auth = new Auth();
