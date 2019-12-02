@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author Dell
+ * @author Wibu
  */
 class Auth {
 
