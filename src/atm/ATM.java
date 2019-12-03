@@ -9,7 +9,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  *
@@ -38,15 +40,12 @@ class Auth {
         int pin = input.nextInt();
         if (card_id == rs.getInt(2) && pin == rs.getInt(3)) {
             status = rs.getInt(8);
-
         }
         return status;
     }
 
 }
 
-<<<<<<< Updated upstream
-=======
 class Menu {
 
     public Menu() {
@@ -93,41 +92,13 @@ class Menu {
     }
 }
 
->>>>>>> Stashed changes
 public class ATM {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
         Auth auth = new Auth();
-<<<<<<< Updated upstream
-        boolean check=false;
-        do{
-        try {
-                System.out.println("Card ID or Pin Incorrect !!");
-            switch (auth.loginUser()) {
-                case 1:
-                    System.out.println("Admin login successfully!");
-                    break;
-                case 2:
-                    System.out.println("User login !!");
-                    break;
-                case 3:
-                    System.out.println("Exit.");
-                    break;
-                default:
-                    System.out.println("Card ID or PIN incorrect !!");
-                    System.out.println("");
-                    check=true;
-                    break;
-            }
-        } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
-            System.out.println("Can't connect database.");
-        }
-        }while(check);
-=======
         boolean check = true;
         do {
             try {
@@ -151,7 +122,6 @@ public class ATM {
                 System.out.println("Cannot connect to the database!");
             }
         } while (!check);
->>>>>>> Stashed changes
     }
 
 }
