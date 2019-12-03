@@ -15,16 +15,18 @@ import java.sql.SQLException;
  */
 public class DataConnection {
 
- 
+  public  static final String DB_URL = "jdbc:mysql://localhost:3306/atm";
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "";
+
    
 
  
   
-    public static Connection getConnection(String dbURL, String userName, 
-            String password) throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection conn = null;
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(dbURL, userName, password);
+            conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
 //            System.out.println("connect successfully!");
      
         return conn;
