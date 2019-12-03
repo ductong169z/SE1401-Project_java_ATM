@@ -78,6 +78,16 @@ public class ATM {
             System.out.println("Can't connect database.");
         }
         }while(check);
+       
     }
-
+    public void Usermenu(){
+        System.out.println(" ♥(。O ω O。)WELCOME TO WIBU ATM(。O ω O。)♥");
+        System.out.println("            -----USERS MENU-----");
+        System.out.print("1.Deposit                ");
+        System.out.println("2.Withdrawal");
+        System.out.print("3.Balance Enquiry        ");
+        System.out.println("4.Change Password.");
+        System.out.println("5.Exit");
+        System.out.println(" Wibu Choice(1-5): ");
+    }
 }
