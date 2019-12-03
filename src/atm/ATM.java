@@ -9,7 +9,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  *
@@ -48,13 +50,47 @@ class Auth {
 }
 
 class Menu {
-    
-    public Menu(){
-        
+
+    public Menu() {
     }
-    
-    public void displayUserMenu(){
+
+    public int random() {
+        Random rand = new Random(System.currentTimeMillis());
+        int randNum = rand.nextInt(9000) + 1000;
+        return randNum;
+    }
+
+    public void displayAdminMenu() {
+        int choice, check;
         
+        System.out.println("------------ ADMINISTRATION ------------");
+        System.out.println("1. Creating new user account");
+        System.out.println("2. Change deposit limitation");
+        System.out.println("3. Change withdrawal limitation");
+        System.out.println("4. Change the number of last transactions on display");
+        System.out.println("5. Create deposit report");
+        System.out.println("6. Create withdrawal report");
+        do {
+            try {
+                Scanner input = new Scanner(System.in);
+                // by default input for "choice" is valid
+                check = 1;
+                
+                System.out.print("Enter your choice: ");
+                choice = input.nextInt();
+                input.nextLine();
+
+                if (choice < 1 || choice > 6) {
+                    check = 0;
+                    System.out.println("Please enter a number from 1 to 6 ");
+                    System.out.println("");
+                }
+            } catch (InputMismatchException ex) {
+                check = 0;
+                System.out.println("Please enter a number ");
+                System.out.println("");
+            }
+        } while (check == 0);
     }
 }
 
@@ -64,20 +100,19 @@ public class ATM {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+
         Auth auth = new Auth();
         try {
             if (auth.loginUser()) {
                 System.out.println("Login successfully!");
             } else {
 
-                System.out.println("Card ID or Pin Incorrect !!");
+                System.out.println("Card ID or PIN is Incorrect");
             }
         } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
-            System.out.println("Can't connect database.");
+            System.out.println("Cannot connect to the database!");
         }
-        
-        
+
     }
 
 }
