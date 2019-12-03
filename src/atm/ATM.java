@@ -98,7 +98,7 @@ class Menu {
     // random from 10000000 to 10099999
     public int randomCardID() {
         Random rand = new Random(System.currentTimeMillis());
-        int randNum = rand.nextInt(99999) + 10000000;
+        int randNum = rand.nextInt(100000) + 10000000;
         return randNum;
     }
 
