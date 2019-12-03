@@ -68,6 +68,7 @@ class Menu {
         System.out.println("4. Change the number of last transactions on display");
         System.out.println("5. Create deposit report");
         System.out.println("6. Create withdrawal report");
+        System.out.println("7. Exit");
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -78,7 +79,7 @@ class Menu {
                 choice = input.nextInt();
                 input.nextLine();
 
-                if (choice < 1 || choice > 6) {
+                if (choice < 1 || choice > 7) {
                     check = false;
                     System.out.println("Please enter a number from 1 to 6 ");
                     System.out.println("");
