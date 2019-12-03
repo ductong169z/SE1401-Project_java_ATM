@@ -106,12 +106,10 @@ public class ATM {
                     case 1:
                         System.out.println("Admin login successfully!");
                         System.out.println("Hello " + user.getUser_name());
-                        check = false;
                         break;
                     case 2:
                         System.out.println("User login successfully!!");
                         System.out.println("Hello " + user.getUser_name());
-                        check = false;
                         break;
                     case 0:
                         System.out.println("Card ID or PIN incorrect !!");
