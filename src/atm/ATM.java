@@ -56,7 +56,7 @@ class Auth {
         Statement stmt = conn.createStatement();
         int status = 0;
 
-        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id,pin,contact_number,gender,address,users.name,role_id from users join user_role on users.id= user_id");
+        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender, address, users.name, role_id FROM users JOIN user_role ON users.id= user_id");
         // show data
 
         rs.next();
@@ -230,35 +230,30 @@ public class ATM {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Auth auth = new Auth();
-        boolean check = true;
-        do {
-            try {
-                switch (auth.loginUser()) {
-                    case 1:
-                        System.out.println("Admin login successfully !!");
-                        break;
-                    case 2:
-                        System.out.println("User login successfully !!");
-                        break;
-                    case 3:
-                        System.out.println("Exit.");
-                        break;
-                    default:
-                        System.out.println("Card ID or PIN is incorrect !!");
-                        System.out.println("");
-                        check = false;
-                        break;
-                }
-            } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
-                check = false;
-                System.out.println("Cannot connect to the database!");
+        System.out.println("--------WIBU BANK----------");
+        UserInfo user = Auth.loginUser();
+
+        try {
+            switch (user.getRole_id()) {
+                case 1:
+                    System.out.println("Admin login successfully!");
+                    System.out.println("Hello " + user.getUser_name());
+                    break;
+                case 2:
+                    System.out.println("User login successfully!!");
+                    System.out.println("Hello " + user.getUser_name());
+                    break;
+                case 0:
+                    System.out.println("Card ID or PIN incorrect !!");
+                    System.out.println("");
+
+                    break;
             }
-        } while (!check);
-
-        Menu obj = new Menu();
-
-        obj.createAccount();
+        } catch (NullPointerException ex) {
+            System.out.println("Can't connect database.");
+        } catch (InputMismatchException e) {
+            System.out.println("Input numbers only!");
+        }
 
     }
 
