@@ -57,39 +57,77 @@ class Menu {
         return randNum;
     }
 
+    public void createAccount(){
+        
+    }
+    
     public void displayAdminMenu() {
-        int choice;
-        boolean check; // validate if input is valid
+        int choice = 0;
+        boolean check = true; // validate if input is valid (by default input is valid)
 
-        System.out.println("------------ ADMINISTRATION ------------");
-        System.out.println("1. Creating new user account");
-        System.out.println("2. Change deposit limitation");
-        System.out.println("3. Change withdrawal limitation");
-        System.out.println("4. Change the number of last transactions on display");
-        System.out.println("5. Create deposit report");
-        System.out.println("6. Create withdrawal report");
-        System.out.println("7. Exit");
         do {
-            try {
-                Scanner input = new Scanner(System.in);
-                // by default input for "choice" is valid
-                check = true;
+            System.out.println("------------ ADMINISTRATION ------------");
+            System.out.println("1. Creating new user account");
+            System.out.println("2. Change deposit limitation");
+            System.out.println("3. Change withdrawal limitation");
+            System.out.println("4. Change the number of last transactions on display");
+            System.out.println("5. Create deposit report");
+            System.out.println("6. Create withdrawal report");
+            System.out.println("7. Exit");
+            do {
+                try {
+                    Scanner input = new Scanner(System.in);
 
-                System.out.print("Enter your choice: ");
-                choice = input.nextInt();
-                input.nextLine();
+                    System.out.print("Enter your choice: ");
+                    choice = input.nextInt();
+                    input.nextLine();
 
-                if (choice < 1 || choice > 7) {
+                    if (choice < 1 || choice > 7) {
+                        check = false;
+                        System.out.println("Please enter a number from 1 to 6 ");
+                        System.out.println("");
+                    }
+                } catch (InputMismatchException ex) {
                     check = false;
-                    System.out.println("Please enter a number from 1 to 6 ");
+                    System.out.println("Please enter a number ");
+                    System.out.println("");
+                } catch (Exception ex) {
+                    check = false;
+                    System.out.println("An error occured! Please try again later!");
                     System.out.println("");
                 }
-            } catch (InputMismatchException ex) {
-                check = false;
-                System.out.println("Please enter a number ");
-                System.out.println("");
+            } while (!check);
+
+            switch (choice) {
+                case 1:
+                    createAccount();
+                    
+                    break;
+
+                case 2:
+
+                    break;
+
+                case 3:
+
+                    break;
+
+                case 4:
+
+                    break;
+
+                case 5:
+
+                    break;
+
+                case 6:
+
+                    break;
+
+                case 7:
+
             }
-        } while (!check);
+        } while (choice != 7);
     }
 }
 
@@ -120,7 +158,11 @@ public class ATM {
                         break;
                 }
             } catch (SQLException | NullPointerException | ClassNotFoundException ex) {
+                check = false;
                 System.out.println("Cannot connect to the database!");
+            } catch (Exception ex) {
+                check = false;
+                System.out.println("An error occured! Please try again later!");
             }
         } while (!check);
     }
