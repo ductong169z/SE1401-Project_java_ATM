@@ -291,6 +291,20 @@ class Menu {
 
     }
     
+    /**
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param depositLimit value of deposits to change
+     * @param depositNumLimit value of number of deposits to change
+     */
+    public void changeDepositLimit(int mode, int depositLimit, int depositNumLimit){
+        if (mode == 1){
+            // set depositLimit in database to inputted deposit limit
+        }
+        else{
+            // set depositNumLimit in database to inputted number of deposits limit
+        }
+    }
+    
     public void changeDepositRelatedLimits() {
         int choice = 0; // store the choice
         boolean check = true; // validate if input is valid (by default input is valid)
@@ -315,7 +329,7 @@ class Menu {
                     choice = input.nextInt();
                     input.nextLine();
 
-                    if (choice < 1 || choice > 7) {
+                    if (choice < 1 || choice > 5) {
                         check = false;
                         System.out.println("Please input a number from 1 to 5 ");
                     }
@@ -339,10 +353,9 @@ class Menu {
                             depositLimit = input.nextInt();
                             input.nextLine();
 
-                            if (depositLimit <= 5) {
+                            if (depositLimit < 25000) {
                                 check = false;
-                                System.out.println("Please input a number from 1 to 5 ");
-                                System.out.println("If you want to input 5, ");
+                                System.out.println("Please input a number equal to or larger than 25000! ");
                             }
                             
                         } catch (InputMismatchException ex) {
@@ -353,18 +366,45 @@ class Menu {
                             System.out.println("An error occured! Please try again later!");
                         }
                     } while (!check);
+                    
+                    changeDepositLimit(1, depositLimit, 0);
             
                     break;
 
                 case 2:
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
 
+                            depositNumLimit = input.nextInt();
+                            input.nextLine();
+
+                            if (depositNumLimit < 5) {
+                                check = false;
+                                System.out.println("Please input a number equal to or larger than 5! ");
+                            }
+                            
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input a number ");
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later!");
+                        }
+                    } while (!check);
+                    
+                    changeDepositLimit(1, 0, depositNumLimit);                  
+                    
                     break;
 
                 case 3:
+                    changeDepositLimit(1, 25000, 0);
 
                     break;
 
                 case 4:
+                    changeDepositLimit(1, 0, 5);
 
                     break;
 
@@ -374,6 +414,20 @@ class Menu {
         } while (choice != 5);
     }
 
+    /**
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param withdrawLimit value of withdrawals to change
+     * @param withdrawNumLimit value of number of withdrawals to change
+     */
+    public void changeWithdrawLimit(int mode, int withdrawLimit, int withdrawNumLimit){
+        if (mode == 1){
+            // set withdrawLimit in database to inputted withdrawal limit
+        }
+        else{
+            // set withdrawNumLimit in database to inputted number of withdrawals limit
+        }
+    }    
+    
     public void changeWithdrawRelatedLimits() {
         int choice = 0;
         boolean check = true; // validate if input is valid (by default input is valid)
@@ -398,7 +452,7 @@ class Menu {
                     choice = input.nextInt();
                     input.nextLine();
 
-                    if (choice < 1 || choice > 7) {
+                    if (choice < 1 || choice > 5) {
                         check = false;
                         System.out.println("Please input a number from 1 to 5! ");
                     }
@@ -414,18 +468,66 @@ class Menu {
 
             switch (choice) {
                 case 1:
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
 
+                            withdrawLimit = input.nextInt();
+                            input.nextLine();
+
+                            if (withdrawLimit < 25000) {
+                                check = false;
+                                System.out.println("Please input a number equal to or larger than 25000! ");
+                            }
+                            
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input a number ");
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later!");
+                        }
+                    } while (!check);
+                    
+                    changeWithdrawLimit(1, withdrawLimit, 0);
+            
                     break;
 
                 case 2:
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
 
+                            withdrawNumLimit = input.nextInt();
+                            input.nextLine();
+
+                            if (withdrawNumLimit < 5) {
+                                check = false;
+                                System.out.println("Please input a number equal to or larger than 5! ");
+                            }
+                            
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input a number ");
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later!");
+                        }
+                    } while (!check);
+                    
+                    changeWithdrawLimit(1, 0, withdrawNumLimit);                  
+                    
                     break;
 
                 case 3:
+                    changeWithdrawLimit(1, 25000, 0);
 
                     break;
 
                 case 4:
+                    changeWithdrawLimit(1, 0, 5);
 
                     break;
 
@@ -463,6 +565,8 @@ class Menu {
                 System.out.println("An error occured! Please try again later!");
             }
         } while (!check);
+        
+        // code to set number of transactions to display (for balance enquiry method)
 
         return transCount;
     }
@@ -599,6 +703,7 @@ class Menu {
                     break;
 
                 case 10:
+                    
             }
         } while (choice != 10);
     }
