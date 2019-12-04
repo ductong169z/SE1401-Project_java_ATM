@@ -58,7 +58,7 @@ class Auth {
         boolean check = true;
 
         ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender, address, users.name, role_id FROM users JOIN user_role ON users.id= user_id");
-// show data
+        // show data
 
         rs.next();
 
@@ -203,10 +203,10 @@ class Menu {
         /**
          * input and fill account basic details
          */
-        System.out.println("Filling account basic details: ");
+        System.out.println("Filling the new account's basic details: ");
 
         // input and check account's name
-        System.out.print("Input account's name: ");
+        System.out.print("Input the account's name: ");
 
         do {
             try {
@@ -226,7 +226,7 @@ class Menu {
         } while (!check);
 
         // input and check account's contactNumber       
-        System.out.print("Input account's contact number: ");
+        System.out.print("Input the account's contact number: ");
 
         do {
             try {
@@ -239,7 +239,7 @@ class Menu {
                 for (int i = 0; i < contactNumber.length(); i++) {
                     if (contactNumber.charAt(i) < 48 || contactNumber.charAt(i) > 57) {
                         check = false;
-                        System.out.println("Please input a string with numbers only! ");
+                        System.out.println("Please input numbers only! ");
                         break;
                     }
                 }
@@ -256,7 +256,7 @@ class Menu {
         } while (!check);
 
         // input and check account's gender       
-        System.out.print("Input account's gender (0 - Female or 1 - Male): ");
+        System.out.print("Input the account's gender (0 - Female or 1 - Male): ");
 
         do {
             try {
@@ -283,7 +283,7 @@ class Menu {
         } while (!check);
 
         // input and check account's address   
-        System.out.print("Input account's address: ");
+        System.out.print("Input the account's address: ");
 
         do {
             try {
@@ -313,8 +313,8 @@ class Menu {
 
     }
 
-    public void changeDepositLimit() {
-        int choice = 0;
+    public void changeDepositRelatedLimits() {
+        int choice = 0; // store the choice
         boolean check = true; // validate if input is valid (by default input is valid)
         int depositLimit = 25000; // store deposit limit
         int depositNumLimit = 5; // store the limit of number of deposits
@@ -355,7 +355,30 @@ class Menu {
 
             switch (choice) {
                 case 1:
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
 
+                            depositLimit = input.nextInt();
+                            input.nextLine();
+
+                            if (depositLimit <= 5) {
+                                check = false;
+                                System.out.println("Please input a number from 1 to 5 ");
+                                System.out.println("If you want to input 5, ");
+                            }
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input a number ");
+
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later!");
+
+                        }
+                    } while (!check);
+            
                     break;
 
                 case 2:
@@ -376,7 +399,7 @@ class Menu {
         } while (choice != 5);
     }
 
-    public void changeWithdrawLimit() {
+    public void changeWithdrawRelatedLimits() {
         int choice = 0;
         boolean check = true; // validate if input is valid (by default input is valid)
         int withdrawLimit = 25000; // store withdraw limit
@@ -527,15 +550,15 @@ class Menu {
 
         do {
             System.out.println("------------ ADMINISTRATION ------------");
-            System.out.println("1. Creating new user account");
-            System.out.println("2. Change deposit limitation");
-            System.out.println("3. Change withdrawal limitation");
-            System.out.println("4. Change the number of last transactions on display");
+            System.out.println("1. Create new user account");
+            System.out.println("2. Change deposit-related limitations");
+            System.out.println("3. Change withdrawal-related limitations");
+            System.out.println("4. Change the number of last transactions to display");
             System.out.println("5. Create deposit report");
             System.out.println("6. Create withdrawal report");
             System.out.println("7. Change user info");
             System.out.println("8. Change admin info");
-            System.out.println("9. Change current password");
+            System.out.println("9. Change current account's password");
             System.out.println("10. Exit");
             System.out.print("Input your choice: ");
 
@@ -570,12 +593,12 @@ class Menu {
                     break;
 
                 case 2:
-                    changeDepositLimit();
+                    changeDepositRelatedLimits();
 
                     break;
 
                 case 3:
-                    changeWithdrawLimit();
+                    changeWithdrawRelatedLimits();
 
                     break;
 
