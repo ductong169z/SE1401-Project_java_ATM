@@ -81,11 +81,9 @@ class Auth {
             } catch (InputMismatchException ex) {
                 check = false;
                 System.out.println("Please input numbers only for card ID! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -108,19 +106,17 @@ class Auth {
             } catch (InputMismatchException e) {
                 check = false;
                 System.out.println("Only numbers here !!");
-
             } catch (Exception e) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
         if (card_id == rs.getInt(2) && pin == rs.getInt(3)) {
-
+            
             UserInfo user = new UserInfo(rs.getInt(1), rs.getString(7), rs.getInt(8));
             return user;
-
+            
         } else {
             UserInfo user2 = new UserInfo();
             return user2;
@@ -171,11 +167,9 @@ class Menu {
             } catch (InputMismatchException ex) {
                 check = false;
                 System.out.println("Please input an integer! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -191,6 +185,7 @@ class Menu {
             if (getCardID.next()) {
                 check = false;
             }
+            
         } while (!check);
 
         int PIN = randomPIN();
@@ -217,7 +212,6 @@ class Menu {
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -243,7 +237,6 @@ class Menu {
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -266,11 +259,9 @@ class Menu {
             } catch (InputMismatchException ex) {
                 check = false;
                 System.out.println("Please input an integer! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -287,7 +278,6 @@ class Menu {
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
 
@@ -328,16 +318,14 @@ class Menu {
                     if (choice < 1 || choice > 7) {
                         check = false;
                         System.out.println("Please input a number from 1 to 5 ");
-
                     }
+                    
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number ");
-
                 } catch (Exception ex) {
                     check = false;
                     System.out.println("An error occured! Please try again later!");
-
                 }
             } while (!check);
 
@@ -356,14 +344,13 @@ class Menu {
                                 System.out.println("Please input a number from 1 to 5 ");
                                 System.out.println("If you want to input 5, ");
                             }
+                            
                         } catch (InputMismatchException ex) {
                             check = false;
                             System.out.println("Please input a number ");
-
                         } catch (Exception ex) {
                             check = false;
                             System.out.println("An error occured! Please try again later!");
-
                         }
                     } while (!check);
             
@@ -414,16 +401,14 @@ class Menu {
                     if (choice < 1 || choice > 7) {
                         check = false;
                         System.out.println("Please input a number from 1 to 5! ");
-
                     }
+                    
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number! ");
-
                 } catch (Exception ex) {
                     check = false;
                     System.out.println("An error occured! Please try again later!");
-
                 }
             } while (!check);
 
@@ -473,11 +458,9 @@ class Menu {
             } catch (InputMismatchException ex) {
                 check = false;
                 System.out.println("Please input a number ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later!");
-
             }
         } while (!check);
 
@@ -488,7 +471,7 @@ class Menu {
 
     }
 
-    public void createWithdrawalReport() {
+    public void createWithdrawReport() {
 
     }
 
@@ -514,11 +497,9 @@ class Menu {
             } catch (InputMismatchException ex) {
                 check = false;
                 System.out.println("Please input user card ID as a number! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
-
             }
         } while (!check);
     }
@@ -560,16 +541,14 @@ class Menu {
                     if (choice < 1 || choice > 10) {
                         check = false;
                         System.out.println("Please input a number from 1 to 10 ");
-
                     }
+                    
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number ");
-
                 } catch (Exception ex) {
                     check = false;
                     System.out.println("An error occured! Please try again later!");
-
                 }
             } while (!check);
 
@@ -600,7 +579,7 @@ class Menu {
                     break;
 
                 case 6:
-                    createWithdrawalReport();
+                    createWithdrawReport();
 
                     break;
 
@@ -653,6 +632,7 @@ public class ATM {
                         check = false;
                         break;
                 }
+                
             } catch (NullPointerException ex) {
                 System.out.println("Can't connect database.");
             } catch (InputMismatchException e) {
