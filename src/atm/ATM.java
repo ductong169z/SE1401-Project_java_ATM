@@ -80,7 +80,7 @@ class Auth {
 
             } catch (InputMismatchException ex) {
                 check = false;
-                System.out.println("Please input card ID as a number! ");
+                System.out.println("Please input numbers only for card ID! ");
 
             } catch (Exception ex) {
                 check = false;
@@ -214,10 +214,6 @@ class Menu {
                 check = true; // by default input is valid
                 name = input.nextLine();
 
-            } catch (InputMismatchException ex) {
-                check = false;
-                System.out.println("Please input account's name as a string! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
@@ -243,10 +239,6 @@ class Menu {
                         break;
                     }
                 }
-
-            } catch (InputMismatchException ex) {
-                check = false;
-                System.out.println("Please input account's contact number as a string! ");
 
             } catch (Exception ex) {
                 check = false;
@@ -292,10 +284,6 @@ class Menu {
 
                 address = input.nextLine();
 
-            } catch (InputMismatchException ex) {
-                check = false;
-                System.out.println("Please input account's address as a string! ");
-
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
@@ -312,7 +300,7 @@ class Menu {
         stmt.executeUpdate("INSERT INTO user_money(user_id, total_money) VALUES(" + userID + "," + 0 + ")");
 
     }
-
+    
     public void changeDepositRelatedLimits() {
         int choice = 0; // store the choice
         boolean check = true; // validate if input is valid (by default input is valid)
@@ -480,7 +468,6 @@ class Menu {
                 if (transCount < 1) {
                     check = false;
                     System.out.println("The number of displayed transactions must be at least 1! ");
-
                 }
 
             } catch (InputMismatchException ex) {
