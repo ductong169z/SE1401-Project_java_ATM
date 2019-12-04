@@ -65,6 +65,7 @@ class Auth {
         System.out.println("Please enter CARD ID:");
         int card_id = 0;
 
+        // loop until card ID is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -80,7 +81,7 @@ class Auth {
 
             } catch (InputMismatchException ex) {
                 check = false;
-                System.out.println("Please input numbers only for card ID! ");
+                System.out.println("Please input 8-digit numbers only for card ID! ");
             } catch (Exception ex) {
                 check = false;
                 System.out.println("An error occured! Please try again later! ");
@@ -90,6 +91,7 @@ class Auth {
         System.out.println("Please enter PIN:");
         int pin = 0;
 
+        // loop until PIN is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -150,6 +152,7 @@ class Menu {
         System.out.println("Do you want to create an account for an admin or a user?");
         // input and check role ID
 
+        // loop until role ID is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -203,6 +206,7 @@ class Menu {
         // input and check account's name
         System.out.print("Input the account's name: ");
 
+        // loop until account's name is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -218,6 +222,7 @@ class Menu {
         // input and check account's contactNumber       
         System.out.print("Input the account's contact number: ");
 
+        // loop until account's contact number is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -243,6 +248,7 @@ class Menu {
         // input and check account's gender       
         System.out.print("Input the account's gender (0 - Female or 1 - Male): ");
 
+        // loop until account's gender is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -268,6 +274,7 @@ class Menu {
         // input and check account's address   
         System.out.print("Input the account's address: ");
 
+        // loop until account's address is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -310,6 +317,7 @@ class Menu {
         boolean check = true; // validate if input is valid (by default input is valid)
         int depositLimit = 25000; // store deposit limit
         int depositNumLimit = 5; // store the limit of number of deposits
+        
         // loop until "exit" is chosen
         do {
             System.out.println("What would you like to do?");
@@ -320,8 +328,8 @@ class Menu {
             System.out.println("5. Exit");
             System.out.print("Input your choice: ");
 
+            // loop until choice is correctly inputted 
             do {
-
                 try {
                     Scanner input = new Scanner(System.in);
                     check = true; // by default input is valid
@@ -345,6 +353,7 @@ class Menu {
 
             switch (choice) {
                 case 1:
+                    // loop until depositLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
@@ -372,6 +381,7 @@ class Menu {
                     break;
 
                 case 2:
+                    // loop until depositNumLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
@@ -444,6 +454,7 @@ class Menu {
             System.out.println("5. Exit");
             System.out.print("Input your choice: ");
 
+            // loop until choice is correctly inputted
             do {
                 try {
                     Scanner input = new Scanner(System.in);
@@ -468,6 +479,7 @@ class Menu {
 
             switch (choice) {
                 case 1:
+                    // loop until withdrawLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
@@ -495,6 +507,7 @@ class Menu {
                     break;
 
                 case 2:
+                    // loop until withdrawNumLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
@@ -544,6 +557,7 @@ class Menu {
         // loop until input is valid
         System.out.print("Input your choice: ");
 
+        // loop until transCount is correctly inputted
         do {
             try {
                 Scanner input = new Scanner(System.in);
@@ -583,37 +597,100 @@ class Menu {
         int cardID = 0;
         boolean check = true; // by default input is valid
 
-        System.out.print("Input user's card ID: ");
+        System.out.print("Please input user's card ID: ");
 
+        // loop until card ID exists in database
         do {
-            try {
-                Scanner input = new Scanner(System.in);
-                check = true; // by default input is valid
+            // loop until card ID is correctly inputted
+            do {
+                try {
+                    Scanner input = new Scanner(System.in);
+                    check = true; // by default input is valid
 
-                cardID = input.nextInt();
-                input.nextLine();
+                    cardID = input.nextInt();
+                    input.nextLine();
 
-                if (cardID < 10000000 || cardID > 10099999) {
+                    if (cardID < 10000000 || cardID > 10099999) {
+                        check = false;
+                        System.out.println("Card ID is from 10000000 to 10099999");
+                    }
+
+                } catch (InputMismatchException ex) {
                     check = false;
-                    System.out.println("Card ID is from 10000000 to 10099999");
+                    System.out.println("Please input user card ID as a number of 8 digits! ");
+                } catch (Exception ex) {
+                    check = false;
+                    System.out.println("An error occured! Please try again later! ");
                 }
-
-            } catch (InputMismatchException ex) {
-                check = false;
-                System.out.println("Please input user card ID as a number! ");
-            } catch (Exception ex) {
-                check = false;
-                System.out.println("An error occured! Please try again later! ");
-            }
-        } while (!check);
+            } while (!check);
+        } while (false);
     }
 
     public void changeAdminInfo() {
+        int masterPasword = 0;
+        boolean check = true; // by default input is valid
 
+        System.out.print("Please input master password: ");
+
+        // loop until inputted master password is valid
+        do {
+            // loop until master password is inputted correctly
+            do {
+                try {
+                    Scanner input = new Scanner(System.in);
+                    check = true; // by default input is valid
+
+                    masterPasword = input.nextInt();
+                    input.nextLine();
+
+                    // if master password is not correct, request input again
+                    if (masterPasword != 0) {
+                        check = false;
+                        System.out.println("Master Password is incorrect, try again! ");
+                    }
+
+                } catch (InputMismatchException ex) {
+                    check = false;
+                    System.out.println("Please input master password as a number! ");
+                } catch (Exception ex) {
+                    check = false;
+                    System.out.println("An error occured! Please try again later! ");
+                }
+            } while (!check);
+        } while (false);
     }
 
     public void changePassword() {
+        int PIN = 0;
+        boolean check = true; // by default input is valid
 
+        System.out.print("Please input current PIN: ");
+
+        // loop until PIN is the same as stored PIN in database
+        do {
+            // loop until PIN is a valid number from 1000 to 9999
+            do {
+                try {
+                    Scanner input = new Scanner(System.in);
+                    check = true; // by default input is valid
+
+                    PIN = input.nextInt();
+                    input.nextLine();
+
+                    if (PIN < 1000 || PIN > 9999) {
+                        check = false;
+                        System.out.println("PIN is from 1000 to 9999! ");
+                    }
+
+                } catch (InputMismatchException ex) {
+                    check = false;
+                    System.out.println("Please input PIN as a number of 4 digits! ");
+                } catch (Exception ex) {
+                    check = false;
+                    System.out.println("An error occured! Please try again later! ");
+                }
+            } while (!check);
+        } while (false);
     }
 
     public void displayAdminMenu() throws SQLException, ClassNotFoundException {
@@ -634,6 +711,7 @@ class Menu {
             System.out.println("10. Exit");
             System.out.print("Input your choice: ");
 
+            // loop until choice is correctly inputted
             do {
                 try {
                     Scanner input = new Scanner(System.in);
@@ -718,6 +796,8 @@ public class ATM {
         System.out.println("--------WIBU BANK----------");
         
         boolean check = true;
+        
+        // loop until login credentials are correct
         do {
             try {
                 check = true;
