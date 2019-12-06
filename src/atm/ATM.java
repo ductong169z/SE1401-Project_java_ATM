@@ -641,7 +641,7 @@ class Menu {
     public void changeAdminInfo() {
         int masterPasword = 0;
         boolean check = true; // by default input is valid
-boolean mastercheck=true;// check master
+        boolean mastercheck = true;// check master
 
         System.out.print("Please input master password: ");
         // loop until inputted master password is valid
@@ -842,7 +842,7 @@ public class ATM {
 
         Menu obj = new Menu();
 
-        obj.createAccount();
+        obj.displayAdminMenu();
     }
 
 }
