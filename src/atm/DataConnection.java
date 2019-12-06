@@ -20,9 +20,8 @@ public class DataConnection {
     private static final String PASSWORD = "";
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
         Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+       Connection conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
 
         return conn;
     }

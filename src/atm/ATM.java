@@ -57,11 +57,6 @@ class Auth {
         int status = 0;
         boolean check = true;
 
-        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender, address, users.name, role_id FROM users JOIN user_role ON users.id= user_id");
-        // show data
-
-        rs.next();
-
         System.out.println("Please enter CARD ID:");
         int card_id = 0;
 
@@ -113,12 +108,15 @@ class Auth {
                 System.out.println("An error occured! Please try again later! ");
             }
         } while (!check);
+        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender,"
+                + " address, users.name, role_id FROM users JOIN user_role ON users.id= user_id WHERE card_id =" + card_id);
+        // show data
 
-        if (card_id == rs.getInt(2) && pin == rs.getInt(3)) {
-            
+        if (rs.next() && card_id == rs.getInt(2) && pin == rs.getInt(3)) {
+
             UserInfo user = new UserInfo(rs.getInt(1), rs.getString(7), rs.getInt(8));
             return user;
-            
+
         } else {
             UserInfo user2 = new UserInfo();
             return user2;
@@ -188,7 +186,7 @@ class Menu {
             if (getCardID.next()) {
                 check = false;
             }
-            
+
         } while (!check);
 
         int PIN = randomPIN();
@@ -219,7 +217,7 @@ class Menu {
             }
         } while (!check);
 
-        // input and check account's contactNumber       
+        // input and check account's contactNumber
         System.out.print("Input the account's contact number: ");
 
         // loop until account's contact number is correctly inputted
@@ -229,7 +227,7 @@ class Menu {
                 check = true; // by default input is valid
 
                 contactNumber = input.nextLine();
-                
+
                 // check if there is a character in string not a number
                 for (int i = 0; i < contactNumber.length(); i++) {
                     if (contactNumber.charAt(i) < 48 || contactNumber.charAt(i) > 57) {
@@ -245,7 +243,7 @@ class Menu {
             }
         } while (!check);
 
-        // input and check account's gender       
+        // input and check account's gender
         System.out.print("Input the account's gender (0 - Female or 1 - Male): ");
 
         // loop until account's gender is correctly inputted
@@ -271,7 +269,7 @@ class Menu {
             }
         } while (!check);
 
-        // input and check account's address   
+        // input and check account's address
         System.out.print("Input the account's address: ");
 
         // loop until account's address is correctly inputted
@@ -297,27 +295,34 @@ class Menu {
         stmt.executeUpdate("INSERT INTO user_money(user_id, total_money) VALUES(" + userID + "," + 0 + ")");
 
     }
-    
+
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
-    public void changeDepositLimit(int mode, int depositLimit, int depositNumLimit){
-        if (mode == 1){
+    public void changeDepositLimit(int mode, int depositLimit, int depositNumLimit) throws SQLException, ClassNotFoundException {
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        if (mode == 1) {
             // set depositLimit in database to inputted deposit limit
-        }
-        else{
+
+            stmt.executeUpdate("UPDATE setting SET deposit_lim=" + depositLimit + " WHERE ID=1");
+
+        } else {
             // set depositNumLimit in database to inputted number of deposits limit
+            stmt.executeUpdate("UPDATE setting SET num_deposit_lim=" + depositNumLimit + " WHERE ID=1");
+
         }
     }
-    
-    public void changeDepositRelatedLimits() {
+
+    public void changeDepositRelatedLimits() throws SQLException, ClassNotFoundException {
         int choice = 0; // store the choice
         boolean check = true; // validate if input is valid (by default input is valid)
         int depositLimit = 25000; // store deposit limit
         int depositNumLimit = 5; // store the limit of number of deposits
-        
+
         // loop until "exit" is chosen
         do {
             System.out.println("What would you like to do?");
@@ -328,7 +333,7 @@ class Menu {
             System.out.println("5. Exit");
             System.out.print("Input your choice: ");
 
-            // loop until choice is correctly inputted 
+            // loop until choice is correctly inputted
             do {
                 try {
                     Scanner input = new Scanner(System.in);
@@ -341,7 +346,7 @@ class Menu {
                         check = false;
                         System.out.println("Please input a number from 1 to 5 ");
                     }
-                    
+
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number ");
@@ -366,7 +371,7 @@ class Menu {
                                 check = false;
                                 System.out.println("Please input a number equal to or larger than 25000! ");
                             }
-                            
+
                         } catch (InputMismatchException ex) {
                             check = false;
                             System.out.println("Please input a number ");
@@ -375,9 +380,9 @@ class Menu {
                             System.out.println("An error occured! Please try again later!");
                         }
                     } while (!check);
-                    
+
                     changeDepositLimit(1, depositLimit, 0);
-            
+
                     break;
 
                 case 2:
@@ -394,7 +399,7 @@ class Menu {
                                 check = false;
                                 System.out.println("Please input a number equal to or larger than 5! ");
                             }
-                            
+
                         } catch (InputMismatchException ex) {
                             check = false;
                             System.out.println("Please input a number ");
@@ -403,9 +408,9 @@ class Menu {
                             System.out.println("An error occured! Please try again later!");
                         }
                     } while (!check);
-                    
-                    changeDepositLimit(2, 0, depositNumLimit);                  
-                    
+
+                    changeDepositLimit(2, 0, depositNumLimit);
+
                     break;
 
                 case 3:
@@ -425,20 +430,27 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
-    public void changeWithdrawLimit(int mode, int withdrawLimit, int withdrawNumLimit){
-        if (mode == 1){
+    public void changeWithdrawLimit(int mode, int withdrawLimit, int withdrawNumLimit) throws SQLException, ClassNotFoundException {
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+
+        if (mode == 1) {
             // set withdrawLimit in database to inputted withdrawal limit
-        }
-        else{
+            stmt.executeUpdate("UPDATE setting SET withdraw_lim=" + withdrawLimit + " WHERE ID=1");
+
+        } else {
             // set withdrawNumLimit in database to inputted number of withdrawals limit
+            stmt.executeUpdate("UPDATE setting SET num_withdraw_lim=" + withdrawNumLimit + " WHERE ID=1");
+
         }
-    }    
-    
-    public void changeWithdrawRelatedLimits() {
+    }
+
+    public void changeWithdrawRelatedLimits() throws SQLException, ClassNotFoundException {
         int choice = 0;
         boolean check = true; // validate if input is valid (by default input is valid)
         int withdrawLimit = 25000; // store withdraw limit
@@ -467,7 +479,7 @@ class Menu {
                         check = false;
                         System.out.println("Please input a number from 1 to 5! ");
                     }
-                    
+
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number! ");
@@ -492,7 +504,7 @@ class Menu {
                                 check = false;
                                 System.out.println("Please input a number equal to or larger than 25000! ");
                             }
-                            
+
                         } catch (InputMismatchException ex) {
                             check = false;
                             System.out.println("Please input a number ");
@@ -501,9 +513,9 @@ class Menu {
                             System.out.println("An error occured! Please try again later!");
                         }
                     } while (!check);
-                    
+
                     changeWithdrawLimit(1, withdrawLimit, 0);
-            
+
                     break;
 
                 case 2:
@@ -520,7 +532,7 @@ class Menu {
                                 check = false;
                                 System.out.println("Please input a number equal to or larger than 5! ");
                             }
-                            
+
                         } catch (InputMismatchException ex) {
                             check = false;
                             System.out.println("Please input a number ");
@@ -529,9 +541,9 @@ class Menu {
                             System.out.println("An error occured! Please try again later!");
                         }
                     } while (!check);
-                    
-                    changeWithdrawLimit(2, 0, withdrawNumLimit);                  
-                    
+
+                    changeWithdrawLimit(2, 0, withdrawNumLimit);
+
                     break;
 
                 case 3:
@@ -550,8 +562,8 @@ class Menu {
         } while (choice != 5);
     }
 
-    public int setTransCount() {
-        int transCount = 5; // store number of transactions from input (default value: 5) 
+    public void setTransCount() throws SQLException, ClassNotFoundException {
+        int transCount = 5; // store number of transactions from input (default value: 5)
         boolean check = true; // validate input
 
         // loop until input is valid
@@ -579,10 +591,10 @@ class Menu {
                 System.out.println("An error occured! Please try again later!");
             }
         } while (!check);
-        
-        // code to set number of transactions to display (for balance enquiry method)
-
-        return transCount;
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        // code to set number of transactions to display (for balance enquiry method
+        stmt.executeUpdate("UPDATE setting SET num_trans_display=" + transCount + " WHERE ID=1");
     }
 
     public void createDepositReport() {
@@ -629,9 +641,9 @@ class Menu {
     public void changeAdminInfo() {
         int masterPasword = 0;
         boolean check = true; // by default input is valid
+boolean mastercheck=true;// check master
 
         System.out.print("Please input master password: ");
-
         // loop until inputted master password is valid
         do {
             // loop until master password is inputted correctly
@@ -657,6 +669,7 @@ class Menu {
                     System.out.println("An error occured! Please try again later! ");
                 }
             } while (!check);
+
         } while (false);
     }
 
@@ -724,7 +737,7 @@ class Menu {
                         check = false;
                         System.out.println("Please input a number from 1 to 10 ");
                     }
-                    
+
                 } catch (InputMismatchException ex) {
                     check = false;
                     System.out.println("Please input a number ");
@@ -781,7 +794,7 @@ class Menu {
                     break;
 
                 case 10:
-                    
+
             }
         } while (choice != 10);
     }
@@ -791,18 +804,20 @@ public class ATM {
 
     /**
      * @param args the command line arguments
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         System.out.println("--------WIBU BANK----------");
-        
+
         boolean check = true;
-        
+
         // loop until login credentials are correct
         do {
             try {
                 check = true;
                 UserInfo user = Auth.loginUser();
-                
+
                 switch (user.getRole_id()) {
                     case 1:
                         System.out.println("Admin login successfully!");
@@ -817,14 +832,14 @@ public class ATM {
                         check = false;
                         break;
                 }
-                
-            } catch (NullPointerException ex) {
+
+            } catch (NullPointerException | SQLException ex) {
                 System.out.println("Can't connect database.");
             } catch (InputMismatchException e) {
                 System.out.println("Input numbers only!");
             }
         } while (!check);
-        
+
         Menu obj = new Menu();
 
         obj.createAccount();
