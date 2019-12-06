@@ -404,7 +404,7 @@ class Menu {
                         }
                     } while (!check);
                     
-                    changeDepositLimit(1, 0, depositNumLimit);                  
+                    changeDepositLimit(2, 0, depositNumLimit);                  
                     
                     break;
 
@@ -414,7 +414,7 @@ class Menu {
                     break;
 
                 case 4:
-                    changeDepositLimit(1, 0, 5);
+                    changeDepositLimit(2, 0, 5);
 
                     break;
 
@@ -530,7 +530,7 @@ class Menu {
                         }
                     } while (!check);
                     
-                    changeWithdrawLimit(1, 0, withdrawNumLimit);                  
+                    changeWithdrawLimit(2, 0, withdrawNumLimit);                  
                     
                     break;
 
@@ -540,7 +540,7 @@ class Menu {
                     break;
 
                 case 4:
-                    changeWithdrawLimit(1, 0, 5);
+                    changeWithdrawLimit(2, 0, 5);
 
                     break;
 
