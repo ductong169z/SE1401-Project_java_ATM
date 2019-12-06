@@ -9,9 +9,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -298,7 +303,8 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
@@ -430,7 +436,8 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
@@ -441,6 +448,7 @@ class Menu {
         if (mode == 1) {
             // set withdrawLimit in database to inputted withdrawal limit
             stmt.executeUpdate("UPDATE setting SET withdraw_lim=" + withdrawLimit + " WHERE ID=1");
+
 
         } else {
             // set withdrawNumLimit in database to inputted number of withdrawals limit
@@ -594,13 +602,93 @@ class Menu {
         Statement stmt = conn.createStatement();
         // code to set number of transactions to display (for balance enquiry method
         stmt.executeUpdate("UPDATE setting SET num_trans_display=" + transCount + " WHERE ID=1");
+
+
+
     }
 
     public void createDepositReport() {
+        boolean check = false;
+        System.out.println("Deposit Report: ");
+        Scanner input = new Scanner(System.in);
 
+        do {
+            try {
+                System.out.print("Enter Date:");
+                String date = input.nextLine();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                Date inputDate = dateFormat.parse(date);
+                check = true;
+                Connection conn;
+                try {
+                    conn = DataConnection.getConnection();
+                    Statement stmt = conn.createStatement();
+                    ResultSet rS = stmt.executeQuery("SELECT  card_id, name, deposit_money, total_money  \n"
+                            + "From user_deposit w \n"
+                            + "	join users u \n"
+                            + "		on w.user_id=u.id \n"
+                            + "	JOIN user_money m \n"
+                            + "		on w.user_id = m.user_id\n"
+                            + " where created_at like '" + dateFormat.format(inputDate) + "%'");
+                    int i ;
+                    System.out.println("Card_id    | Name               | Deposit Amount      | Balance      |");
+                    while(rS.next()){
+                        i=1;
+                        System.out.print(rS.getString(i++)+"    ");
+                        System.out.print(rS.getString(i++)+"       ");
+                        System.out.print(rS.getString(i++)+"                  ");
+                        System.out.println(rS.getString(i++));
+                    }
+                } catch (ClassNotFoundException | SQLException ex) {
+                }
+
+            } catch (ParseException ex) {
+                System.out.println("Please enter the right format!!!");
+                check = false;
+            }
+        } while (!check);
     }
 
     public void createWithdrawReport() {
+        boolean check = false;
+        System.out.println("Withdrawal Report: ");
+        Scanner input = new Scanner(System.in);
+
+        do {
+            try {
+                System.out.print("Enter Date:");
+                String date = input.nextLine();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                Date inputDate = dateFormat.parse(date);
+                check = true;
+                Connection conn;
+                try {
+                    conn = DataConnection.getConnection();
+                    Statement stmt = conn.createStatement();
+                    ResultSet rS = stmt.executeQuery("SELECT  card_id, name, user_withdraw, total_money  \n"
+                            + "From user_withdraw w \n"
+                            + "	join users u \n"
+                            + "		on w.user_id=u.id \n"
+                            + "	JOIN user_money m \n"
+                            + "		on w.user_id = m.user_id\n"
+                            + " where created_aat like '" + dateFormat.format(inputDate) + "%'");
+                    int i ;
+                    System.out.println("Card_id    | Name               | Withdraw Amount      | Balance      |");
+                    while(rS.next()){
+                        i=1;
+                        System.out.print(rS.getString(i++)+"    ");
+                        System.out.print(rS.getString(i++)+"       ");
+                        System.out.print(rS.getString(i++)+"                  ");
+                        System.out.println(rS.getString(i++));
+                    }
+                } catch (ClassNotFoundException | SQLException ex) {
+                }
+
+            } catch (ParseException ex) {
+                System.out.println("Please enter the right format!!!");
+                check = false;
+            }
+        } while (!check);
 
     }
 
