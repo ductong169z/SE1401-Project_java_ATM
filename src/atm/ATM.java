@@ -57,11 +57,6 @@ class Auth {
         int status = 0;
         boolean check = true;
 
-        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender, address, users.name, role_id FROM users JOIN user_role ON users.id= user_id");
-        // show data
-
-        rs.next();
-
         System.out.println("Please enter CARD ID:");
         int card_id = 0;
 
@@ -113,8 +108,11 @@ class Auth {
                 System.out.println("An error occured! Please try again later! ");
             }
         } while (!check);
+        ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender,"
+                + " address, users.name, role_id FROM users JOIN user_role ON users.id= user_id WHERE card_id =" + card_id);
+        // show data
 
-        if (card_id == rs.getInt(2) && pin == rs.getInt(3)) {
+        if (rs.next() && card_id == rs.getInt(2) && pin == rs.getInt(3)) {
 
             UserInfo user = new UserInfo(rs.getInt(1), rs.getString(7), rs.getInt(8));
             return user;
@@ -299,20 +297,27 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
-    public void changeDepositLimit(int mode, int depositLimit, int depositNumLimit){
-        if (mode == 1){
+    public void changeDepositLimit(int mode, int depositLimit, int depositNumLimit) throws SQLException, ClassNotFoundException {
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        if (mode == 1) {
             // set depositLimit in database to inputted deposit limit
-        }
-        else{
+
+            stmt.executeUpdate("UPDATE setting SET deposit_lim=" + depositLimit + " WHERE ID=1");
+
+        } else {
             // set depositNumLimit in database to inputted number of deposits limit
+            stmt.executeUpdate("UPDATE setting SET num_deposit_lim=" + depositNumLimit + " WHERE ID=1");
+
         }
     }
 
-    public void changeDepositRelatedLimits() {
+    public void changeDepositRelatedLimits() throws SQLException, ClassNotFoundException {
         int choice = 0; // store the choice
         boolean check = true; // validate if input is valid (by default input is valid)
         int depositLimit = 25000; // store deposit limit
@@ -404,7 +409,7 @@ class Menu {
                         }
                     } while (!check);
 
-                    changeDepositLimit(1, 0, depositNumLimit);
+                    changeDepositLimit(2, 0, depositNumLimit);
 
                     break;
 
@@ -414,7 +419,7 @@ class Menu {
                     break;
 
                 case 4:
-                    changeDepositLimit(1, 0, 5);
+                    changeDepositLimit(2, 0, 5);
 
                     break;
 
@@ -425,20 +430,27 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
-    public void changeWithdrawLimit(int mode, int withdrawLimit, int withdrawNumLimit){
-        if (mode == 1){
+    public void changeWithdrawLimit(int mode, int withdrawLimit, int withdrawNumLimit) throws SQLException, ClassNotFoundException {
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+
+        if (mode == 1) {
             // set withdrawLimit in database to inputted withdrawal limit
-        }
-        else{
+            stmt.executeUpdate("UPDATE setting SET withdraw_lim=" + withdrawLimit + " WHERE ID=1");
+
+        } else {
             // set withdrawNumLimit in database to inputted number of withdrawals limit
+            stmt.executeUpdate("UPDATE setting SET num_withdraw_lim=" + withdrawNumLimit + " WHERE ID=1");
+
         }
     }
 
-    public void changeWithdrawRelatedLimits() {
+    public void changeWithdrawRelatedLimits() throws SQLException, ClassNotFoundException {
         int choice = 0;
         boolean check = true; // validate if input is valid (by default input is valid)
         int withdrawLimit = 25000; // store withdraw limit
@@ -550,7 +562,7 @@ class Menu {
         } while (choice != 5);
     }
 
-    public int setTransCount() {
+    public void setTransCount() throws SQLException, ClassNotFoundException {
         int transCount = 5; // store number of transactions from input (default value: 5)
         boolean check = true; // validate input
 
@@ -579,10 +591,10 @@ class Menu {
                 System.out.println("An error occured! Please try again later!");
             }
         } while (!check);
-
-        // code to set number of transactions to display (for balance enquiry method)
-
-        return transCount;
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        // code to set number of transactions to display (for balance enquiry method
+        stmt.executeUpdate("UPDATE setting SET num_trans_display=" + transCount + " WHERE ID=1");
     }
 
     public void createDepositReport() {
@@ -629,9 +641,9 @@ class Menu {
     public void changeAdminInfo() {
         int masterPasword = 0;
         boolean check = true; // by default input is valid
+boolean mastercheck=true;// check master 
 
         System.out.print("Please input master password: ");
-
         // loop until inputted master password is valid
         do {
             // loop until master password is inputted correctly
@@ -657,6 +669,7 @@ class Menu {
                     System.out.println("An error occured! Please try again later! ");
                 }
             } while (!check);
+            
         } while (false);
     }
 
@@ -791,6 +804,8 @@ public class ATM {
 
     /**
      * @param args the command line arguments
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         System.out.println("--------WIBU BANK----------");
@@ -818,7 +833,7 @@ public class ATM {
                         break;
                 }
 
-            } catch (NullPointerException ex) {
+            } catch (NullPointerException | SQLException ex) {
                 System.out.println("Can't connect database.");
             } catch (InputMismatchException e) {
                 System.out.println("Input numbers only!");
