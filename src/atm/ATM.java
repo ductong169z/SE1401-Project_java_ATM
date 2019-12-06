@@ -108,6 +108,7 @@ class Auth {
                 System.out.println("An error occured! Please try again later! ");
             }
         } while (!check);
+
         ResultSet rs = stmt.executeQuery("SELECT users.id, card_id, pin, contact_number, gender,"
                 + " address, users.name, role_id FROM users JOIN user_role ON users.id= user_id WHERE card_id =" + card_id);
         // show data
@@ -297,8 +298,7 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for
-     * changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
@@ -430,8 +430,7 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for
-     * changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
@@ -608,69 +607,490 @@ class Menu {
     public void changeUserInfo() {
         int cardID = 0;
         boolean check = true; // by default input is valid
+        int choice = 0;
 
-        System.out.print("Please input user's card ID: ");
-
-        // loop until card ID exists in database
+        // loop until exit is chosen
         do {
-            // loop until card ID is correctly inputted
+            // loop until card ID exists in database
+            System.out.print("Please input user's card ID: ");
+
+            // temp variables
+            String name = "";
+            String contactNumber = "";
+            int gender = 1;
+            String address = "";
+            int pin = 0;
+
+            // loop until card ID is valid
+            do {
+                // loop until card ID is correctly inputted
+                do {
+                    try {
+                        Scanner input = new Scanner(System.in);
+                        check = true; // by default input is valid
+
+                        cardID = input.nextInt();
+                        input.nextLine();
+
+                        if (cardID < 10000000 || cardID > 10099999) {
+                            check = false;
+                            System.out.println("Card ID is from 10000000 to 10099999");
+                        }
+
+                    } catch (InputMismatchException ex) {
+                        check = false;
+                        System.out.println("Please input user card ID as a number of 8 digits! ");
+                    } catch (Exception ex) {
+                        check = false;
+                        System.out.println("An error occured! Please try again later! ");
+                    }
+                } while (!check);
+            } while (false);
+
+            System.out.println("Select one of following options to change for user: ");
+            System.out.println("1. Change PIN");
+            System.out.println("2. Change name ");
+            System.out.println("3. Change contact number");
+            System.out.println("4. Change gender");
+            System.out.println("5. Change address");
+            System.out.println("6. Exit");
+            System.out.println("Please input your choice: ");
+
             do {
                 try {
                     Scanner input = new Scanner(System.in);
                     check = true; // by default input is valid
 
-                    cardID = input.nextInt();
+                    choice = input.nextInt();
                     input.nextLine();
 
-                    if (cardID < 10000000 || cardID > 10099999) {
+                    if (choice < 1 || choice > 6) {
                         check = false;
-                        System.out.println("Card ID is from 10000000 to 10099999");
+                        System.out.println("Please input a number from 1 to 6 ");
                     }
 
                 } catch (InputMismatchException ex) {
                     check = false;
-                    System.out.println("Please input user card ID as a number of 8 digits! ");
+                    System.out.println("Please input a number ");
                 } catch (Exception ex) {
                     check = false;
-                    System.out.println("An error occured! Please try again later! ");
+                    System.out.println("An error occured! Please try again later!");
                 }
             } while (!check);
-        } while (false);
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Input new PIN: ");
+                    // loop until PIN is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true;
+
+                            pin = input.nextInt();
+                            input.nextLine();
+
+                            if (pin < 1000 || pin > 9999) {
+                                check = false;
+                                System.out.println("PIN consists of 4 numbers! ");
+                            }
+
+                        } catch (InputMismatchException e) {
+                            check = false;
+                            System.out.println("Only numbers here !!");
+                        } catch (Exception e) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+
+                    // SQL statements to update in database
+                    // check luon voi role ID neu ko phai cua user ko cho doi
+                    break;
+
+                case 2:
+                    // input and check account's name
+                    System.out.print("Input new name: ");
+
+                    // loop until account's name is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
+                            name = input.nextLine();
+
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+
+                    // SQL statements to update in database
+                    // check luon voi role ID neu ko phai cua user ko cho doi
+                    break;
+
+                case 3:
+                    // input and check account's contactNumber
+                    System.out.print("Input new contact number: ");
+
+                    // loop until account's contact number is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
+
+                            contactNumber = input.nextLine();
+
+                            // check if there is a character in string not a number
+                            for (int i = 0; i < contactNumber.length(); i++) {
+                                if (contactNumber.charAt(i) < 48 || contactNumber.charAt(i) > 57) {
+                                    check = false;
+                                    System.out.println("Please input numbers only! ");
+                                    break;
+                                }
+                            }
+
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+
+                    // SQL statements to update in database
+                    // check luon voi role ID neu ko phai cua user ko cho doi
+                    break;
+
+                case 4:
+                    // input and check account's gender
+                    System.out.print("Input new gender (0 - Female or 1 - Male): ");
+
+                    // loop until account's gender is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
+
+                            gender = input.nextInt();
+                            input.nextLine();
+
+                            if (gender != 0 && gender != 1) {
+                                check = false;
+                                System.out.println("Please input 0 (female) or 1 (male)! ");
+                            }
+
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input an integer! ");
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+
+                    // SQL statements to update in database
+                    // check luon voi role ID neu ko phai cua user ko cho doi
+                    break;
+
+                case 5:
+                    // input and check account's address
+                    System.out.print("Input new address: ");
+
+                    // loop until account's address is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
+
+                            address = input.nextLine();
+
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+
+                    // SQL statements to update in database
+                    // check luon voi role ID neu ko phai cua user ko cho doi
+                    break;
+
+                case 6:
+                    System.out.println("Exiting changing user info ...");
+            }
+        } while (choice != 6);
+
     }
 
     public void changeAdminInfo() {
         int masterPasword = 0;
         boolean check = true; // by default input is valid
         boolean mastercheck = true;// check master
+        int choice = 0;
+        int cardID = 0;
+        char confirm = 'Y';
 
-        System.out.print("Please input master password: ");
-        // loop until inputted master password is valid
+        // confirm if admin knows the master password 
+        System.out.println("Do you really remember the master password?");
         do {
-            // loop until master password is inputted correctly
-            do {
-                try {
-                    Scanner input = new Scanner(System.in);
-                    check = true; // by default input is valid
+            try {
+                Scanner input = new Scanner(System.in);
+                check = true; // by default input is valid
 
-                    masterPasword = input.nextInt();
-                    input.nextLine();
+                confirm = input.next().charAt(0);
+                input.nextLine();
 
-                    // if master password is not correct, request input again
-                    if (masterPasword != 0) {
-                        check = false;
-                        System.out.println("Master Password is incorrect, try again! ");
-                    }
-
-                } catch (InputMismatchException ex) {
+                if (confirm != 'Y' && confirm != 'N') {
                     check = false;
-                    System.out.println("Please input master password as a number! ");
-                } catch (Exception ex) {
-                    check = false;
-                    System.out.println("An error occured! Please try again later! ");
+                    System.out.println("Enter Y or N only! ");
                 }
-            } while (!check);
 
-        } while (false);
+            } catch (InputMismatchException ex) {
+                check = false;
+                System.out.println("Please enter 1 character only ");
+            } catch (Exception ex) {
+                check = false;
+                System.out.println("An error occured! Please try again later! ");
+            }
+        } while (!check);
+
+        // run this only if user chooses 'Y'
+        if (confirm == 'Y') {
+            System.out.print("Please input master password: ");
+            // loop until inputted master password is valid
+            do {
+                // loop until master password is inputted correctly
+                do {
+                    try {
+                        Scanner input = new Scanner(System.in);
+                        check = true; // by default input is valid
+
+                        masterPasword = input.nextInt();
+                        input.nextLine();
+
+                        // if master password is not correct, request input again
+                        if (masterPasword != 0) {
+                            check = false;
+                            System.out.println("Master Password is incorrect, try again! ");
+                        }
+
+                    } catch (InputMismatchException ex) {
+                        check = false;
+                        System.out.println("Please input master password as a number! ");
+                    } catch (Exception ex) {
+                        check = false;
+                        System.out.println("An error occured! Please try again later! ");
+                    }
+                } while (!check);
+
+            } while (false);
+
+            // loop until exit is chosen
+            do {
+                // loop until card ID exists in database
+                System.out.print("Please input user's card ID: ");
+
+                // temp variables
+                String name = "";
+                String contactNumber = "";
+                int gender = 1;
+                String address = "";
+                int pin = 0;
+
+                do {
+                    // loop until card ID is correctly inputted
+                    do {
+                        try {
+                            Scanner input = new Scanner(System.in);
+                            check = true; // by default input is valid
+
+                            cardID = input.nextInt();
+                            input.nextLine();
+
+                            if (cardID < 10000000 || cardID > 10099999) {
+                                check = false;
+                                System.out.println("Card ID is from 10000000 to 10099999");
+                            }
+
+                        } catch (InputMismatchException ex) {
+                            check = false;
+                            System.out.println("Please input user card ID as a number of 8 digits! ");
+                        } catch (Exception ex) {
+                            check = false;
+                            System.out.println("An error occured! Please try again later! ");
+                        }
+                    } while (!check);
+                } while (false);
+
+                System.out.println("Select one of following options to change for admin: ");
+                System.out.println("1. Change PIN");
+                System.out.println("2. Change name ");
+                System.out.println("3. Change contact number");
+                System.out.println("4. Change gender");
+                System.out.println("5. Change address");
+                System.out.println("6. Exit");
+                System.out.println("Please input your choice: ");
+
+                do {
+                    try {
+                        Scanner input = new Scanner(System.in);
+                        check = true; // by default input is valid
+
+                        choice = input.nextInt();
+                        input.nextLine();
+
+                        if (choice < 1 || choice > 6) {
+                            check = false;
+                            System.out.println("Please input a number from 1 to 6 ");
+                        }
+
+                    } catch (InputMismatchException ex) {
+                        check = false;
+                        System.out.println("Please input a number ");
+                    } catch (Exception ex) {
+                        check = false;
+                        System.out.println("An error occured! Please try again later!");
+                    }
+                } while (!check);
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Input new PIN: ");
+                        // loop until PIN is correctly inputted
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true;
+
+                                pin = input.nextInt();
+                                input.nextLine();
+
+                                if (pin < 1000 || pin > 9999) {
+                                    check = false;
+                                    System.out.println("PIN consists of 4 numbers! ");
+                                }
+
+                            } catch (InputMismatchException e) {
+                                check = false;
+                                System.out.println("Only numbers here !!");
+                            } catch (Exception e) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
+
+                        // SQL statements to update in database
+                        // check luon voi role ID neu ko phai cua admin ko cho doi
+                        break;
+
+                    case 2:
+                        // input and check account's name
+                        System.out.print("Input new name: ");
+
+                        // loop until account's name is correctly inputted
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true; // by default input is valid
+                                name = input.nextLine();
+
+                            } catch (Exception ex) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
+
+                        // SQL statements to update in database
+                        // check luon voi role ID neu ko phai cua admin ko cho doi
+                        break;
+
+                    case 3:
+                        // input and check account's contactNumber
+                        System.out.print("Input new contact number: ");
+
+                        // loop until account's contact number is correctly inputted
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true; // by default input is valid
+
+                                contactNumber = input.nextLine();
+
+                                // check if there is a character in string not a number
+                                for (int i = 0; i < contactNumber.length(); i++) {
+                                    if (contactNumber.charAt(i) < 48 || contactNumber.charAt(i) > 57) {
+                                        check = false;
+                                        System.out.println("Please input numbers only! ");
+                                        break;
+                                    }
+                                }
+
+                            } catch (Exception ex) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
+
+                        // SQL statements to update in database
+                        // check luon voi role ID neu ko phai cua admin ko cho doi
+                        break;
+
+                    case 4:
+                        // input and check account's gender
+                        System.out.print("Input new gender (0 - Female or 1 - Male): ");
+
+                        // loop until account's gender is correctly inputted
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true; // by default input is valid
+
+                                gender = input.nextInt();
+                                input.nextLine();
+
+                                if (gender != 0 && gender != 1) {
+                                    check = false;
+                                    System.out.println("Please input 0 (female) or 1 (male)! ");
+                                }
+
+                            } catch (InputMismatchException ex) {
+                                check = false;
+                                System.out.println("Please input an integer! ");
+                            } catch (Exception ex) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
+
+                        // SQL statements to update in database
+                        // check luon voi role ID neu ko phai cua admin ko cho doi
+                        break;
+
+                    case 5:
+                        // input and check account's address
+                        System.out.print("Input new address: ");
+
+                        // loop until account's address is correctly inputted
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true; // by default input is valid
+
+                                address = input.nextLine();
+
+                            } catch (Exception ex) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
+
+                        // SQL statements to update in database
+                        // check luon voi role ID neu ko phai cua admin ko cho doi
+                        break;
+
+                    case 6:
+                        System.out.println("Exiting changing admin info ...");
+                }
+            } while (choice != 6);
+        }
     }
 
     public void changePassword() {
