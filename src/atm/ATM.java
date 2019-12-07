@@ -88,6 +88,7 @@ public class ATM {
         System.out.print("3.Balance Enquiry        ");
         System.out.println("4.Change Password.");
         System.out.println("5.Exit");
-        System.out.println(" Wibu Choice(1-5): ");
-    }
+        System.out.println(" Wibu Choice(1-5): ");   
+    }   
+    
 }
