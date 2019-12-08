@@ -303,8 +303,7 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for
-     * changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
@@ -436,8 +435,7 @@ class Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for
-     * changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
@@ -448,7 +446,6 @@ class Menu {
         if (mode == 1) {
             // set withdrawLimit in database to inputted withdrawal limit
             stmt.executeUpdate("UPDATE setting SET withdraw_lim=" + withdrawLimit + " WHERE ID=1");
-
 
         } else {
             // set withdrawNumLimit in database to inputted number of withdrawals limit
@@ -603,8 +600,6 @@ class Menu {
         // code to set number of transactions to display (for balance enquiry method
         stmt.executeUpdate("UPDATE setting SET num_trans_display=" + transCount + " WHERE ID=1");
 
-
-
     }
 
     public void createDepositReport() {
@@ -630,13 +625,13 @@ class Menu {
                             + "	JOIN user_money m \n"
                             + "		on w.user_id = m.user_id\n"
                             + " where created_at like '" + dateFormat.format(inputDate) + "%'");
-                    int i ;
+                    int i;
                     System.out.println("Card_id    | Name               | Deposit Amount      | Balance      |");
-                    while(rS.next()){
-                        i=1;
-                        System.out.print(rS.getString(i++)+"    ");
-                        System.out.print(rS.getString(i++)+"       ");
-                        System.out.print(rS.getString(i++)+"                  ");
+                    while (rS.next()) {
+                        i = 1;
+                        System.out.print(rS.getString(i++) + "    ");
+                        System.out.print(rS.getString(i++) + "       ");
+                        System.out.print(rS.getString(i++) + "                  ");
                         System.out.println(rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
@@ -672,13 +667,13 @@ class Menu {
                             + "	JOIN user_money m \n"
                             + "		on w.user_id = m.user_id\n"
                             + " where created_aat like '" + dateFormat.format(inputDate) + "%'");
-                    int i ;
+                    int i;
                     System.out.println("Card_id    | Name               | Withdraw Amount      | Balance      |");
-                    while(rS.next()){
-                        i=1;
-                        System.out.print(rS.getString(i++)+"    ");
-                        System.out.print(rS.getString(i++)+"       ");
-                        System.out.print(rS.getString(i++)+"                  ");
+                    while (rS.next()) {
+                        i = 1;
+                        System.out.print(rS.getString(i++) + "    ");
+                        System.out.print(rS.getString(i++) + "       ");
+                        System.out.print(rS.getString(i++) + "                  ");
                         System.out.println(rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
@@ -1212,6 +1207,8 @@ class Menu {
                 }
             } while (!check);
         } while (false);
+
+        // SQL statements to replace password in database
     }
 
     public void displayAdminMenu() throws SQLException, ClassNotFoundException {
@@ -1302,40 +1299,78 @@ class Menu {
                     break;
 
                 case 10:
-
+                    System.out.println("Exiting ... Thank you for using our service!");
             }
         } while (choice != 10);
     }
 
-    public void Usermenu(UserInfo user) throws SQLException, ClassNotFoundException {
-        System.out.println(" ♥(。O ω O。)WELCOME TO WIBU ATM(。O ω O。)♥");
-        System.out.println("            -----USERS MENU-----");
-        System.out.print("1.Deposit                ");
-        System.out.println("2.Withdrawal");
-        System.out.print("3.Balance Enquiry        ");
-        System.out.println("4.Change Password.");
-        System.out.println("5.Exit");
-        System.out.println(" Wibu Choice(1-5): ");
-        Scanner input = new Scanner(System.in);
-        int choice = input.nextInt();
-        switch (choice) {
-            case 1:
-                deposit(user);
-                Usermenu(user);
-            case 2:
-            case 3:
-                balanceenquiry(user);
-                Usermenu(user);
-            case 4:
-            case 5:
-        }
+    public void displayUserMenu(UserInfo user) throws SQLException, ClassNotFoundException {
+        int choice = 0;
+        boolean check = true;
+        
+        
+        do {
+            System.out.println(" ♥(。O ω O。)WELCOME TO WIBU ATM(。O ω O。)♥");
+            System.out.println("            -----USERS MENU-----");
+            System.out.print("1.Deposit                ");
+            System.out.println("2.Withdrawal");
+            System.out.print("3.Balance Enquiry        ");
+            System.out.println("4.Change Password.");
+            System.out.println("5.Exit");
+            System.out.println(" Wibu Choice(1-5): ");
+
+            do {
+                try {
+                    Scanner input = new Scanner(System.in);
+                    check = true; // by default input is valid
+
+                    choice = input.nextInt();
+                    input.nextLine();
+
+                    if (choice < 1 || choice > 5) {
+                        check = false;
+                        System.out.println("Please input a number from 1 to 6 ");
+                    }
+
+                } catch (InputMismatchException ex) {
+                    check = false;
+                    System.out.println("Please input a number ");
+                } catch (Exception ex) {
+                    check = false;
+                    System.out.println("An error occured! Please try again later!");
+                }
+            } while (!check);
+
+            switch (choice) {
+                case 1:
+                    deposit(user);
+
+                    break;
+
+                case 2:
+
+                    break;
+
+                case 3:
+                    performBalanceEnquiry(user);
+
+                    break;
+
+                case 4:
+                    
+                    break;
+
+                case 5:
+
+            }
+        } while (choice != 5);
 
     }
 
     public void deposit(UserInfo user) throws ClassNotFoundException, SQLException {
         Connection conn = DataConnection.getConnection();
         Statement stmt = conn.createStatement();
-        
+
         ResultSet rS = stmt.executeQuery("Select * FROM settting WHERE id=1");
         rS.next();
         System.out.println(rS.getRow());
@@ -1361,10 +1396,10 @@ class Menu {
                 System.out.println("Error!! Input number must be in range from 10 to " + maxmoney);
             }
         }
-        
+
     }
 
-    public void withdrawal() {
+    public void withdraw() {
         System.out.println("Pleas enter the amount of money you want to take out: ");
         Scanner input = new Scanner(System.in);
         int money = input.nextInt();
@@ -1372,11 +1407,11 @@ class Menu {
         if (money >= 1 && money <= maxmoney) {
 
         } else {
-            System.out.println("Error!! Money withdrawl must between 10 " + "and " + maxmoney);
+            System.out.println("Error!! Money withdrawn must between 10 " + "and " + maxmoney);
         }
     }
 
-    public void balanceenquiry(UserInfo user) throws SQLException, ClassNotFoundException {
+    public void performBalanceEnquiry(UserInfo user) throws SQLException, ClassNotFoundException {
 
         Connection conn = DataConnection.getConnection();
         Statement stmt = conn.createStatement();
