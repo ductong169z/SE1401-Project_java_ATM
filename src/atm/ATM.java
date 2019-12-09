@@ -1559,6 +1559,10 @@ class adminMenu extends Menu {
                                 check = false; // mark input as invalid
                                 System.out.println("Contact number must not be empty!");
                             }
+                            if (contactNumber.length() != 10) {
+                                check = false; // mark input as invalid
+                                System.out.println("Contact number must have 10 digits! ");
+                            }
                             // check if there is a character in string not a number
                             for (int i = 0; i < contactNumber.length(); i++) {
                                 if (contactNumber.charAt(i) < 48 || contactNumber.charAt(i) > 57) {
@@ -1792,7 +1796,7 @@ public class ATM {
                         users_menu.displayUserMenu(user);
                         break;
                     case 0:
-                        System.out.println("Card ID or PIN incorrect !!");
+                        System.out.println("PIN incorrect !!");
                         check = false; // mark the login session as invalid
 
                         break;
