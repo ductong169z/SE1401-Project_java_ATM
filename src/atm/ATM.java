@@ -292,8 +292,7 @@ class userMenu extends Menu {
 
         // loop until user chooses to exit
         do {
-            System.out.println(" ♥(。O ω O。)WELCOME TO WIBU ATM(。O ω O。)♥");
-            System.out.println("            -----USERS MENU-----");
+            System.out.println("------------ WELCOME TO WIBU ATM ------------");
             System.out.print("1. Deposit                ");
             System.out.println("2. Withdrawal");
             System.out.print("3. Balance Enquiry        ");
@@ -347,7 +346,7 @@ class userMenu extends Menu {
 
                 case 5:
                     System.out.println("Exiting... Thank you for using our service!! ");
-                    
+
             }
         } while (choice != 5);
     }
@@ -445,7 +444,7 @@ class userMenu extends Menu {
         Statement stmt = conn.createStatement();
 
         // store the queries' result
-        ResultSet rS = stmt.executeQuery("Select * FROM settting WHERE id=1");
+        ResultSet rS = stmt.executeQuery("Select * FROM setting WHERE id=1");
         rS.next();
 
         // temporarily store the max money allowed to withdraw and the max number of withdrawal allowed to make
@@ -485,6 +484,10 @@ class userMenu extends Menu {
                     if (money < 0 || money > maxWithdrawMoney) {
                         check = false; // mark input as invalid
                         System.out.println("Error!! Input number must be in range from 0 to " + maxWithdrawMoney);
+                    }
+                    if (money > currentMoney) {
+                        check = false; // mark input as invalid
+                        System.out.println("You don't have enough money in current balance to withdraw!");
                     }
 
                 } catch (InputMismatchException ex) {
@@ -556,22 +559,25 @@ class userMenu extends Menu {
                 + "WHERE  user_id=" + user.user_id + " \n"
                 + "ORDER BY created_at DESC");
         System.out.println("");
+        if (historyTrans.first()) {
+            System.out.println("Top " + numTransDisplay + " latest transactions!");
 
-        System.out.println("Top " + numTransDisplay + " latest transactions!");
+            while (historyTrans.next()) {
+                if (historyTrans.getInt(5) == 0) {
+                    System.out.println("Deposit  | Amount : " + historyTrans.getInt(3) + " | Date: " + historyTrans.getDate(4));
 
-        while (historyTrans.next()) {
-            if (historyTrans.getInt(5) == 0) {
-                System.out.println("Deposit  | Amount : " + historyTrans.getInt(3) + " | Time: " + historyTrans.getDate(4));
+                } else {
+                    System.out.println("Withdraw | Amount : " + historyTrans.getInt(3) + " | Date: " + historyTrans.getDate(4));
+                }
 
-            } else {
-                System.out.println("Withdraw | Amount : " + historyTrans.getInt(3) + " | Time: " + historyTrans.getDate(4));
+                countTrans++;
+
+                if (countTrans == numTransDisplay) {
+                    break;
+                }
             }
-
-            countTrans++;
-
-            if (countTrans == numTransDisplay) {
-                break;
-            }
+        } else {
+            System.out.println("There are no transactions in the input date to display!");
         }
     }
 }
@@ -696,6 +702,10 @@ class adminMenu extends Menu {
                     check = false; // mark input as invalid
                     System.out.println("Contact number must not be empty! ");
                 }
+                if (contactNumber.length() != 10) {
+                    check = false; // mark input as invalid
+                    System.out.println("Contact number must have 10 digits! ");
+                }
 
                 // check if there is a character in string not a number
                 for (int i = 0; i < contactNumber.length(); i++) {
@@ -779,7 +789,8 @@ class adminMenu extends Menu {
     /**
      * sub-method to change deposit related limits
      *
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      * @throws SQLException
@@ -801,7 +812,8 @@ class adminMenu extends Menu {
     }
 
     /**
-     * change deposit related limits (deposit amount limit and the number of deposits limit)
+     * change deposit related limits (deposit amount limit and the number of
+     * deposits limit)
      *
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -847,12 +859,13 @@ class adminMenu extends Menu {
 
             switch (choice) {
                 case 1:
+                    System.out.println("Please input deposit amount limit: ");
+
                     // loop until depositLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
                             check = true; // by default input is valid
-
                             depositLimit = input.nextInt();
                             input.nextLine();
 
@@ -877,12 +890,13 @@ class adminMenu extends Menu {
                     break;
 
                 case 2:
+                    System.out.println("Please input number of deposits limit: ");
+
                     // loop until depositNumLimit is correctly inputted
                     do {
                         try {
                             Scanner input = new Scanner(System.in);
                             check = true; // by default input is valid
-
                             depositNumLimit = input.nextInt();
                             input.nextLine();
 
@@ -922,7 +936,7 @@ class adminMenu extends Menu {
 
                 case 5:
                     System.out.println("Exit changing deposit-related limits...");
-                    
+
             }
         } while (choice != 5);
     }
@@ -930,7 +944,8 @@ class adminMenu extends Menu {
     /**
      * sub-method to change withdrawal related limits
      *
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      * @throws SQLException
@@ -952,7 +967,8 @@ class adminMenu extends Menu {
     }
 
     /**
-     * change withdrawal related limits (withdrawal amount limit and the number of withdrawals limit)
+     * change withdrawal related limits (withdrawal amount limit and the number
+     * of withdrawals limit)
      *
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -998,6 +1014,8 @@ class adminMenu extends Menu {
 
             switch (choice) {
                 case 1:
+                    System.out.println("Please input withdrawal amount limit: ");
+
                     // loop until withdrawLimit is correctly inputted
                     do {
                         try {
@@ -1028,6 +1046,8 @@ class adminMenu extends Menu {
                     break;
 
                 case 2:
+                    System.out.println("Please input number of deposits limit: ");
+
                     // loop until withdrawNumLimit is correctly inputted
                     do {
                         try {
@@ -1073,7 +1093,7 @@ class adminMenu extends Menu {
 
                 case 5:
                     System.out.println("Exit changing withdrawal-related limits...");
-                    
+
             }
         } while (choice != 5);
     }
@@ -1138,7 +1158,7 @@ class adminMenu extends Menu {
         // loop until input is valid
         do {
             try {
-                System.out.print("Enter Date:");
+                System.out.print("Enter Date(yyyy-mm-dd):");
 
                 // request to input date
                 String date = input.nextLine();
@@ -1201,7 +1221,7 @@ class adminMenu extends Menu {
         // loop until input is valid
         do {
             try {
-                System.out.print("Enter Date:");
+                System.out.print("Enter Date(yyyy-mm-dd):");
 
                 // request to input date
                 String date = input.nextLine();
@@ -1219,13 +1239,13 @@ class adminMenu extends Menu {
                     Statement stmt = conn.createStatement();
 
                     // store the queries' result
-                    ResultSet rS = stmt.executeQuery("SELECT  card_id, name, user_withdraw, total_money  \n"
+                    ResultSet rS = stmt.executeQuery("SELECT  card_id, name, withdraw_money, total_money  \n"
                             + "From user_withdraw w \n"
                             + "	join users u \n"
                             + "		on w.user_id=u.id \n"
                             + "	JOIN user_money m \n"
                             + "		on w.user_id = m.user_id\n"
-                            + " where created_aat like '" + dateFormat.format(inputDate) + "%'");
+                            + " where created_at like '" + dateFormat.format(inputDate) + "%'");
 
                     int i; // variable to mark the fields to print
 
@@ -1265,19 +1285,16 @@ class adminMenu extends Menu {
             // store the queries' result
             ResultSet rS = stmt.executeQuery("select *\n"
                     + "from users u \n"
-                    + "	join user_role r on u.id = r.user_id\n"
-                    + "where r.role_id = 2;");
+                    + "	join user_role r on u.id = r.user_id\n");
 
             int i; // variable to mark the fields to print
 
             // mark input as invalid
-            System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", "Id", "Card_id", "Pin", "Contact Number", "Gender", "Address", "Name");
-
+            System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s| %12s|\n", "Id", "Card_id", "Pin", "Contact Number", "Gender", "Address", "Name", "Account Type");
             // while the next line in the result set is not empty
             while (rS.next()) {
                 i = 1;
-                // mark input as invalid
-                System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++), rS.getString(i++), (rS.getInt(i++) == 1) ? "Male" : "Female", rS.getString(i++), rS.getString(i++));
+                System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s| %12s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++), rS.getString(i++), (rS.getInt(i++) == 1) ? "Male" : "Female", rS.getString(i++), rS.getString(i++), (rS.getInt(9) == 2) ? "User" : "Admin");
             }
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("Cannot connect to database. ");
@@ -1286,7 +1303,7 @@ class adminMenu extends Menu {
 
     /**
      * change user info (for either an administrator or an user)
-     * 
+     *
      * @params user (user information from class UserInfo)
      * @throws ClassNotFoundException
      * @throws SQLException
@@ -1375,7 +1392,7 @@ class adminMenu extends Menu {
                     // run this only if user chooses 'Y'
                     if (confirm == 'Y') {
                         int failedCount = 0; // initialize a variable to store the number of failed inputs
-                        
+
                         System.out.print("Please input master password: ");
                         // loop until master password is inputted correctly and matches the one in database
                         do {
@@ -1392,7 +1409,7 @@ class adminMenu extends Menu {
                                     failedCount++; // increase the number of failed inputs
                                     System.out.println("Master Password is incorrect, please try again! ");
                                 }
-                                
+
                                 // if an admin input the password wrong 3 times
                                 if (failedCount == 3) {
                                     System.out.println("You have exceeded the number of failed attempts");
