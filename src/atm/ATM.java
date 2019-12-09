@@ -601,6 +601,9 @@ class Menu {
         Statement stmt = conn.createStatement();
         // code to set number of transactions to display (for balance enquiry method
         stmt.executeUpdate("UPDATE setting SET num_trans_display=" + transCount + " WHERE ID=1");
+
+
+
     }
 
     public void createDepositReport() {
@@ -912,7 +915,7 @@ class Menu {
         int cardID = 0;
         char confirm = 'Y';
 
-        // confirm if admin knows the master password 
+        // confirm if admin knows the master password
         System.out.println("Do you really remember the master password?");
         do {
             try {
@@ -1302,6 +1305,95 @@ class Menu {
             }
         } while (choice != 10);
     }
+
+    public void Usermenu(UserInfo user) throws SQLException, ClassNotFoundException {
+        System.out.println(" ♥(。O ω O。)WELCOME TO WIBU ATM(。O ω O。)♥");
+        System.out.println("            -----USERS MENU-----");
+        System.out.print("1.Deposit                ");
+        System.out.println("2.Withdrawal");
+        System.out.print("3.Balance Enquiry        ");
+        System.out.println("4.Change Password.");
+        System.out.println("5.Exit");
+        System.out.println(" Wibu Choice(1-5): ");
+        Scanner input = new Scanner(System.in);
+        int choice = input.nextInt();
+        switch (choice) {
+            case 1:
+                deposit(user);
+                Usermenu(user);
+            case 2:
+            case 3:
+                balanceenquiry(user);
+                Usermenu(user);
+            case 4:
+            case 5:
+        }
+
+    }
+
+    public void deposit(UserInfo user) throws ClassNotFoundException, SQLException {
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        
+        ResultSet rS = stmt.executeQuery("Select * FROM settting WHERE id=1");
+        rS.next();
+        System.out.println(rS.getRow());
+        int maxmoney = rS.getInt(1);
+        int msxcount_limit = rS.getInt(2);
+        ResultSet rS1 = stmt.executeQuery("Select count(*) FROM user_deposit WHERE user_id=" + user.user_id + " AND created_at like '" + java.time.LocalDate.now() + "%'");
+        rS1.next();
+        int count = rS1.getInt(1);
+        ResultSet rS2 = stmt.executeQuery("SELECT total_money FROM user_money WHERE user_id =" + user.user_id);
+        rS2.next();
+        long currentmoney = rS2.getInt(1);
+        System.out.println(currentmoney);
+        if (count > msxcount_limit) {
+            System.out.println("Sorry, You have reach the limit of deposit today.");
+        } else {
+            System.out.println("Pleas enter the amount of money you want to send: ");
+            Scanner input = new Scanner(System.in);
+            int money = input.nextInt();
+            if (money >= 10 && money <= maxmoney) {
+                stmt.executeUpdate("INSERT INTO user_deposit (deposit_money,user_id,created_at) VALUES (" + money + "," + user.user_id + ",'" + java.time.LocalDate.now() + "')");
+                stmt.executeUpdate("UPDATE user_money SET total_money = " + (currentmoney + money) + " WHERE user_id = " + user.user_id);
+            } else {
+                System.out.println("Error!! Input number must be in range from 10 to " + maxmoney);
+            }
+        }
+        
+    }
+
+    public void withdrawal() {
+        System.out.println("Pleas enter the amount of money you want to take out: ");
+        Scanner input = new Scanner(System.in);
+        int money = input.nextInt();
+        int maxmoney = 25000;
+        if (money >= 1 && money <= maxmoney) {
+
+        } else {
+            System.out.println("Error!! Money withdrawl must between 10 " + "and " + maxmoney);
+        }
+    }
+
+    public void balanceenquiry(UserInfo user) throws SQLException, ClassNotFoundException {
+
+        Connection conn = DataConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rS = stmt.executeQuery("SELECT name, gender, card_id, contact_number, address, total_money FROM users JOIN user_money on users.id=user_id WHERE users.id=" + user.user_id);
+        rS.next();
+
+        System.out.println("Name:" + rS.getString(1));
+        if (rS.getInt(2) == 1) {
+            System.out.println("Gender: Male");
+        } else {
+            System.out.println("Gender: Female");
+        }
+        System.out.println("Card ID:" + rS.getInt(3));
+        System.out.println("Contact number:" + rS.getString(4));
+        System.out.println("Address:" + rS.getString(5));
+        System.out.println("Balance Enquiry:" + rS.getString(6));
+
+    }
 }
 
 public class ATM {
@@ -1336,6 +1428,9 @@ public class ATM {
                         check = false;
                         break;
                 }
+                Menu obj = new Menu();
+
+                obj.displayAdminMenu();
 
             } catch (NullPointerException | SQLException ex) {
                 System.out.println("Can't connect database.");
@@ -1344,9 +1439,6 @@ public class ATM {
             }
         } while (!check);
 
-        Menu obj = new Menu();
-
-        obj.displayAdminMenu();
     }
 
 }
