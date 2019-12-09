@@ -1285,7 +1285,7 @@ class adminMenu extends Menu {
         } while (choice != 6);
 
     }
-
+  
     public void displayAdminMenu(UserInfo user) throws SQLException, ClassNotFoundException {
         int choice = 0;
         boolean check = true; // validate if input is valid (by default input is valid)
@@ -1374,11 +1374,9 @@ class adminMenu extends Menu {
 
                 case 10:
                     System.out.println("Exiting... Thank you for using our service!! ");
-
             }
         } while (choice != 9);
     }
-
 }
 
 public class ATM {
