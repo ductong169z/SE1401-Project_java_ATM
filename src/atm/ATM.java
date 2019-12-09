@@ -346,7 +346,8 @@ class userMenu extends Menu {
                     break;
 
                 case 5:
-
+                    System.out.println("Exiting... Thank you for using our service!! ");
+                    
             }
         } while (choice != 5);
     }
@@ -420,7 +421,7 @@ class userMenu extends Menu {
             } while (!check);
 
             // execute SQL statements
-            stmt.executeUpdate("INSERT INTO user_deposit (deposit_money,user_id,created_at) VALUES (" + money + "," + user.user_id + ",'" + java.time.LocalDate.now() + "')");
+            stmt.executeUpdate("INSERT INTO user_deposit (deposit_money,user_id,created_at,type) VALUES (" + money + "," + user.user_id + ",'" + java.time.LocalDate.now() + "',0)");
             stmt.executeUpdate("UPDATE user_money SET total_money = " + (currentMoney + money) + " WHERE user_id = " + user.user_id);
 
             System.out.println("Deposit successfully!!!");
@@ -496,7 +497,7 @@ class userMenu extends Menu {
             } while (!check);
 
             // execute SQL statements
-            stmt.executeUpdate("INSERT INTO user_withdraw (withdraw_money,user_id,created_at) VALUES (" + money + "," + user.user_id + ",'" + java.time.LocalDate.now() + "')");
+            stmt.executeUpdate("INSERT INTO user_withdraw (withdraw_money,user_id,created_at,type) VALUES (" + money + "," + user.user_id + ",'" + java.time.LocalDate.now() + "',1)");
             stmt.executeUpdate("UPDATE user_money SET total_money = " + (currentMoney - money) + " WHERE user_id = " + user.user_id);
 
             System.out.println("Withdrawal successfully!!!");
@@ -513,7 +514,7 @@ class userMenu extends Menu {
      * @throws ClassNotFoundException
      */
     public void performBalanceEnquiry(UserInfo user) throws SQLException, ClassNotFoundException {
-// connect to database
+        // connect to database
         Connection conn = DataConnection.getConnection();
         Statement stmt = conn.createStatement();
 
@@ -521,19 +522,58 @@ class userMenu extends Menu {
         ResultSet rS = stmt.executeQuery("SELECT name, gender, card_id, contact_number, address, total_money FROM users JOIN user_money on users.id=user_id WHERE users.id=" + user.user_id);
         rS.next();
 
+        // print out the name of current user
         System.out.println("Name: " + rS.getString(1));
+
+        // print out whether if gender is male or female
         if (rS.getInt(2) == 1) {
             System.out.println("Gender: Male");
         } else {
             System.out.println("Gender: Female");
         }
+
+        // print out the card ID, contact number, address and balance enquiry
         System.out.println("Card ID: " + rS.getInt(3));
         System.out.println("Contact number: " + rS.getString(4));
         System.out.println("Address: " + rS.getString(5));
         System.out.println("Balance Enquiry: " + rS.getString(6));
 
-    }
+        // display transaction history
+        // store the queries' result
+        ResultSet setting = stmt.executeQuery("Select * FROM setting WHERE id=1");
+        setting.next();
 
+        // store the num of transactions to display from database
+        int numTransDisplay = setting.getInt(5);
+
+        // count the number of tra
+        int countTrans = 0;
+
+        // store the queries' result
+        ResultSet historyTrans = stmt.executeQuery("SELECT * FROM user_withdraw WHERE user_id=" + user.user_id + " \n"
+                + "UNION ALL\n"
+                + "SELECT * FROM user_deposit   \n"
+                + "WHERE  user_id=" + user.user_id + " \n"
+                + "ORDER BY created_at DESC");
+        System.out.println("");
+
+        System.out.println("Top " + numTransDisplay + " latest transactions!");
+
+        while (historyTrans.next()) {
+            if (historyTrans.getInt(5) == 0) {
+                System.out.println("Deposit  | Amount : " + historyTrans.getInt(3) + " | Time: " + historyTrans.getDate(4));
+
+            } else {
+                System.out.println("Withdraw | Amount : " + historyTrans.getInt(3) + " | Time: " + historyTrans.getDate(4));
+            }
+
+            countTrans++;
+
+            if (countTrans == numTransDisplay) {
+                break;
+            }
+        }
+    }
 }
 
 // this class is used to display menu for the admins and includes admin menu related methods
@@ -708,7 +748,7 @@ class adminMenu extends Menu {
                 check = true; // by default input is valid
 
                 address = input.nextLine();
-                
+
                 // if inputted address is empty
                 if (address.isEmpty()) {
                     check = false; // mark input as invalid
@@ -881,7 +921,8 @@ class adminMenu extends Menu {
                     break;
 
                 case 5:
-
+                    System.out.println("Exit changing deposit-related limits...");
+                    
             }
         } while (choice != 5);
     }
@@ -1031,7 +1072,8 @@ class adminMenu extends Menu {
                     break;
 
                 case 5:
-
+                    System.out.println("Exit changing withdrawal-related limits...");
+                    
             }
         } while (choice != 5);
     }
@@ -1083,22 +1125,37 @@ class adminMenu extends Menu {
 
     }
 
+    /**
+     * create deposit report
+     */
     public void createDepositReport() {
-        boolean check = false;
+        boolean check = false; // validate input
+
         System.out.println("Deposit Report: ");
+
         Scanner input = new Scanner(System.in);
 
+        // loop until input is valid
         do {
             try {
                 System.out.print("Enter Date:");
+
+                // request to input date
                 String date = input.nextLine();
+
+                // set a date format for the input
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
                 Date inputDate = dateFormat.parse(date);
-                check = true;
+
+                check = true; // by default input is valid
+
                 Connection conn;
                 try {
+                    // connect database
                     conn = DataConnection.getConnection();
                     Statement stmt = conn.createStatement();
+
+                    // store the queries' result
                     ResultSet rS = stmt.executeQuery("SELECT  card_id, name, deposit_money, total_money  \n"
                             + "From user_deposit w \n"
                             + "	join users u \n"
@@ -1106,40 +1163,62 @@ class adminMenu extends Menu {
                             + "	JOIN user_money m \n"
                             + "		on w.user_id = m.user_id\n"
                             + " where created_at like '" + dateFormat.format(inputDate) + "%'");
-                    int i;
-                    System.out.format("|%8s | %32s | %15s | %13s|\n","Card_id"," Name"," Deposit Amount","Balance");
+
+                    int i; // variable to mark the fields to print
+
+                    // print in the format stated
+                    System.out.format("|%8s | %32s | %15s | %13s|\n", "Card_id", " Name", " Deposit Amount", "Balance");
+
+                    // while the next line in the result set is not empty
                     while (rS.next()) {
                         i = 1;
-                        System.out.format("|%8s | %32s | %15s | %13s|\n",rS.getString(i++),rS.getString(i++),rS.getString(i++),rS.getString(i++));
+
+                        // print in the format stated
+                        System.out.format("|%8s | %32s | %15s | %13s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++), rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
-                    check = false;
+                    check = false; // mark input as invalid
                     System.out.println("Cannot connect to database. ");
                 }
 
             } catch (ParseException ex) {
-                System.out.println("Please enter the right format!!!");
-                check = false;
+                System.out.println("Please enter in the right format!!!");
+                check = false; // mark input as invalid
             }
         } while (!check);
     }
 
+    /**
+     * create withdrawal report
+     */
     public void createWithdrawReport() {
-        boolean check = false;
+        boolean check = false; // validate input
+
         System.out.println("Withdrawal Report: ");
+
         Scanner input = new Scanner(System.in);
 
+        // loop until input is valid
         do {
             try {
                 System.out.print("Enter Date:");
+
+                // request to input date
                 String date = input.nextLine();
+
+                // set a date format for the input
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
                 Date inputDate = dateFormat.parse(date);
-                check = true;
+
+                check = true; // by default input is valid
+
                 Connection conn;
                 try {
+                    // connect to database
                     conn = DataConnection.getConnection();
                     Statement stmt = conn.createStatement();
+
+                    // store the queries' result
                     ResultSet rS = stmt.executeQuery("SELECT  card_id, name, user_withdraw, total_money  \n"
                             + "From user_withdraw w \n"
                             + "	join users u \n"
@@ -1147,57 +1226,72 @@ class adminMenu extends Menu {
                             + "	JOIN user_money m \n"
                             + "		on w.user_id = m.user_id\n"
                             + " where created_aat like '" + dateFormat.format(inputDate) + "%'");
-                    int i;
-                    System.out.format("|%8s | %32s | %15s | %13s|\n","Card_id"," Name"," Withdraw Amount","Balance");
+
+                    int i; // variable to mark the fields to print
+
+                    // print in the format stated
+                    System.out.format("|%8s | %32s | %15s | %13s|\n", "Card_id", " Name", " Withdraw Amount", "Balance");
+
+                    // while the next line in the result set is not empty
                     while (rS.next()) {
                         i = 1;
-                        System.out.format("|%8s | %32s | %15s | %13s|\n",rS.getString(i++),rS.getString(i++),rS.getString(i++),rS.getString(i++));
+
+                        // print in the format stated
+                        System.out.format("|%8s | %32s | %15s | %13s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++), rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
-                    check = false;
+                    check = false; // mark input as invalid
                     System.out.println("Cannot connect to database. ");
                 }
 
             } catch (ParseException ex) {
-                System.out.println("Please enter the right format!!!");
-                check = false;
+                System.out.println("Please enter in the right format!!!");
+                check = false; // mark input as invalid
             }
         } while (!check);
-
     }
 
     /**
-     * 
+     * create account report
      */
     public void createAccountReport() {
-        boolean check = false;
         Connection conn;
+
         try {
+            // connect to database
             conn = DataConnection.getConnection();
             Statement stmt = conn.createStatement();
+
+            // store the queries' result
             ResultSet rS = stmt.executeQuery("select *\n"
                     + "from users u \n"
                     + "	join user_role r on u.id = r.user_id\n"
                     + "where r.role_id = 2;");
-            int i;
-            System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", "Id","Card_id","Pin","Contact Number","Gender","Address" ,"Name");
+
+            int i; // variable to mark the fields to print
+
+            // mark input as invalid
+            System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", "Id", "Card_id", "Pin", "Contact Number", "Gender", "Address", "Name");
+
+            // while the next line in the result set is not empty
             while (rS.next()) {
                 i = 1;
-                System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++),rS.getString(i++),(rS.getInt(i++)==1)?"Male":"Female",rS.getString(i++),rS.getString(i++));
+                // mark input as invalid
+                System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++), rS.getString(i++), (rS.getInt(i++) == 1) ? "Male" : "Female", rS.getString(i++), rS.getString(i++));
             }
         } catch (ClassNotFoundException | SQLException ex) {
-            check = false;
             System.out.println("Cannot connect to database. ");
         }
     }
 
     /**
      * change user info (for either an administrator or an user)
-     *
+     * 
+     * @params user (user information from class UserInfo)
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public void changeUserInfo() throws ClassNotFoundException, SQLException {
+    public void changeUserInfo(UserInfo user) throws ClassNotFoundException, SQLException {
         boolean check = true; // by default input is valid
         int choice = 0; // store input choice
 
@@ -1263,7 +1357,7 @@ class adminMenu extends Menu {
 
                             confirm = input.next().charAt(0);
                             input.nextLine();
-                            
+
                             if (confirm != 'Y' && confirm != 'N') {
                                 check = false; // mark input as invalid
                                 System.out.println("Enter Y or N only! ");
@@ -1280,6 +1374,8 @@ class adminMenu extends Menu {
 
                     // run this only if user chooses 'Y'
                     if (confirm == 'Y') {
+                        int failedCount = 0; // initialize a variable to store the number of failed inputs
+                        
                         System.out.print("Please input master password: ");
                         // loop until master password is inputted correctly and matches the one in database
                         do {
@@ -1292,9 +1388,16 @@ class adminMenu extends Menu {
 
                                 // if master password is not correct, request input again
                                 if (masterPasword.compareTo(rSmpass.getString(1)) != 0) {
-
                                     check = false; // mark input as invalid
+                                    failedCount++; // increase the number of failed inputs
                                     System.out.println("Master Password is incorrect, please try again! ");
+                                }
+                                
+                                // if an admin input the password wrong 3 times
+                                if (failedCount == 3) {
+                                    System.out.println("You have exceeded the number of failed attempts");
+                                    System.out.println("Exitting to admin menu...");
+                                    displayAdminMenu(user);
                                 }
 
                             } catch (InputMismatchException ex) {
@@ -1383,12 +1486,12 @@ class adminMenu extends Menu {
                             System.out.println("An error occured! Please try again later! ");
                         }
                     } while (!check);
-                    
+
                     // SQL statements to update in database
                     stmt.executeUpdate("UPDATE users SET pin= " + pin + " WHERE card_id= " + cardID);
-                    
+
                     System.out.println("Change user's pin successfully!!");
-                    
+
                     break;
 
                 case 2:
@@ -1414,12 +1517,12 @@ class adminMenu extends Menu {
                             System.out.println("An error occured! Please try again later! ");
                         }
                     } while (!check);
-                    
+
                     // SQL statements to update in database
                     stmt.executeUpdate("UPDATE users SET name = '" + name + "' WHERE card_id= " + cardID);
-                    
+
                     System.out.println("Change user's name successfully!!");
-                    
+
                     break;
 
                 case 3:
@@ -1433,7 +1536,7 @@ class adminMenu extends Menu {
                             check = true; // by default input is valid
 
                             contactNumber = input.nextLine();
-                            
+
                             // check if inputted contact number is empty
                             if (contactNumber.isEmpty()) {
                                 check = false; // mark input as invalid
@@ -1456,9 +1559,9 @@ class adminMenu extends Menu {
 
                     // SQL statements to update in database
                     stmt.executeUpdate("UPDATE users SET contact_number= '" + contactNumber + "' WHERE card_id= " + cardID);
-                    
+
                     System.out.println("Change user's contact number successfully!!");
-                    
+
                     break;
 
                 case 4:
@@ -1472,7 +1575,7 @@ class adminMenu extends Menu {
                             check = true; // by default input is valid
 
                             gender = input.nextInt();
-                            input.nextLine(); 
+                            input.nextLine();
 
                             if (gender != 0 && gender != 1) {
                                 check = false; // mark input as invalid
@@ -1487,12 +1590,12 @@ class adminMenu extends Menu {
                             System.out.println("An error occured! Please try again later! ");
                         }
                     } while (!check);
-                    
+
                     // SQL statements to update in database
                     stmt.executeUpdate("UPDATE users SET gender= " + gender + " WHERE card_id= " + cardID);
-                    
+
                     System.out.println("Change user's gender successfully!!");
-                    
+
                     break;
 
                 case 5:
@@ -1504,9 +1607,9 @@ class adminMenu extends Menu {
                         try {
                             Scanner input = new Scanner(System.in);
                             check = true; // by default input is valid
-                            
+
                             address = input.nextLine();
-                            
+
                             // if inputted address is empty
                             if (address.isEmpty()) {
                                 check = false; // mark input as invalid
@@ -1518,12 +1621,12 @@ class adminMenu extends Menu {
                             System.out.println("An error occured! Please try again later! ");
                         }
                     } while (!check);
-                    
+
                     // SQL statements to update in database
                     stmt.executeUpdate("UPDATE users SET address= '" + address + "' WHERE card_id= " + cardID);
-                    
+
                     System.out.println("Change user's address successfully!!");
-            
+
                     break;
 
                 case 6:
@@ -1535,10 +1638,10 @@ class adminMenu extends Menu {
 
     /**
      * display the menu for the administrators
-     * 
+     *
      * @param user
      * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public void displayAdminMenu(UserInfo user) throws SQLException, ClassNotFoundException {
         int choice = 0; // store user input choice
@@ -1568,9 +1671,9 @@ class adminMenu extends Menu {
                     choice = input.nextInt();
                     input.nextLine();
 
-                    if (choice < 1 || choice > 9) {
+                    if (choice < 1 || choice > 10) {
                         check = false; // mark input as invalid
-                        System.out.println("Please input a number from 1 to 9 ");
+                        System.out.println("Please input a number from 1 to 10 ");
                     }
 
                 } catch (InputMismatchException ex) {
@@ -1614,11 +1717,11 @@ class adminMenu extends Menu {
                     break;
                 case 7:
                     createAccountReport();
-                    
+
                     break;
-                
+
                 case 8:
-                    changeUserInfo();
+                    changeUserInfo(user);
 
                     break;
 
@@ -1628,10 +1731,10 @@ class adminMenu extends Menu {
                     break;
 
                 case 10:
-                    System.out.println("Exiting... Thank you for using our service!! ");
+                    System.out.println("Exiting the administration menu...");
 
             }
-        } while (choice != 9);
+        } while (choice != 10);
     }
 
 }
@@ -1645,7 +1748,7 @@ public class ATM {
      * @throws java.lang.ClassNotFoundException
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        System.out.println("--------WIBU BANK----------");
+        System.out.println("-------- WIBU BANK ----------");
 
         boolean check = true; // validate input
 
@@ -1653,9 +1756,9 @@ public class ATM {
         do {
             try {
                 check = true; // by default the login credentials are valid
-                
+
                 UserInfo user = Auth.loginUser();
-                
+
                 // create the objects for admin and user menus
                 adminMenu admin_menu = new adminMenu();
                 userMenu users_menu = new userMenu();
