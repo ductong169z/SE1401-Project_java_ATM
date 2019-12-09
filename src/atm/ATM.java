@@ -581,7 +581,8 @@ class adminMenu extends Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of deposits)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of deposits)
      * @param depositLimit value of deposits to change
      * @param depositNumLimit value of number of deposits to change
      */
@@ -713,7 +714,8 @@ class adminMenu extends Menu {
     }
 
     /**
-     * @param mode as operation mode (1 for changing deposit value and 2 for changing number of withdrawals)
+     * @param mode as operation mode (1 for changing deposit value and 2 for
+     * changing number of withdrawals)
      * @param withdrawLimit value of withdrawals to change
      * @param withdrawNumLimit value of number of withdrawals to change
      */
@@ -904,13 +906,10 @@ class adminMenu extends Menu {
                             + "		on w.user_id = m.user_id\n"
                             + " where created_at like '" + dateFormat.format(inputDate) + "%'");
                     int i;
-                    System.out.println("Card_id    | Name               | Deposit Amount      | Balance      |");
+                    System.out.format("|%8s | %32s | %15s | %13s|\n","Card_id"," Name"," Deposit Amount","Balance");
                     while (rS.next()) {
                         i = 1;
-                        System.out.print(rS.getString(i++) + "    ");
-                        System.out.print(rS.getString(i++) + "       ");
-                        System.out.print(rS.getString(i++) + "                  ");
-                        System.out.println(rS.getString(i++));
+                        System.out.format("|%8s | %32s | %15s | %13s|\n",rS.getString(i++),rS.getString(i++),rS.getString(i++),rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
                     check = false;
@@ -948,13 +947,10 @@ class adminMenu extends Menu {
                             + "		on w.user_id = m.user_id\n"
                             + " where created_aat like '" + dateFormat.format(inputDate) + "%'");
                     int i;
-                    System.out.println("Card_id    | Name               | Withdraw Amount      | Balance      |");
+                    System.out.format("|%8s | %32s | %15s | %13s|\n","Card_id"," Name"," Withdraw Amount","Balance");
                     while (rS.next()) {
                         i = 1;
-                        System.out.print(rS.getString(i++) + "    ");
-                        System.out.print(rS.getString(i++) + "       ");
-                        System.out.print(rS.getString(i++) + "                  ");
-                        System.out.println(rS.getString(i++));
+                        System.out.format("|%8s | %32s | %15s | %13s|\n",rS.getString(i++),rS.getString(i++),rS.getString(i++),rS.getString(i++));
                     }
                 } catch (ClassNotFoundException | SQLException ex) {
                     check = false;
@@ -969,14 +965,37 @@ class adminMenu extends Menu {
 
     }
 
+    // Display name, id, password, contact number, gender, age
+    public void createAccountReport() {
+        boolean check = false;
+        Connection conn;
+        try {
+            conn = DataConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rS = stmt.executeQuery("select *\n"
+                    + "from users u \n"
+                    + "	join user_role r on u.id = r.user_id\n"
+                    + "where r.role_id = 2;");
+            int i;
+            System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", "Id","Card_id","Pin","Contact Number","Gender","Address" ,"Name");
+            while (rS.next()) {
+                i = 1;
+                System.out.format("|%5s | %8s | %4s | %14s | %6s | %32s | %32s|\n", rS.getString(i++), rS.getString(i++), rS.getString(i++),rS.getString(i++),(rS.getInt(i++)==1)?"Male":"Female",rS.getString(i++),rS.getString(i++));
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            check = false;
+            System.out.println("Cannot connect to database. ");
+        }
+    }
+
     public void changeUserInfo() throws ClassNotFoundException, SQLException {
         int cardID = 0;
         boolean check = true; // by default input is valid
         int choice = 0;
-        
+
         Connection conn = DataConnection.getConnection();
         Statement stmt = conn.createStatement();
-        
+
         String name = "";
         String contactNumber = "";
         int gender = 1;
@@ -1012,7 +1031,7 @@ class adminMenu extends Menu {
                     System.out.println("An error occured! Please try again later! ");
                 }
             } while (!check);
-            
+
             ResultSet rS = stmt.executeQuery("SELECT card_id,pin,name,contact_number,gender,address,role_id"
                     + " FROM users JOIN user_role on users.id=user_id where card_id = " + cardID);
             if (rS.next()) {
@@ -1047,29 +1066,29 @@ class adminMenu extends Menu {
                     if (confirm == 'Y') {
                         System.out.print("Please input master password: ");
                         // loop until inputted master password is valid
-                            // loop until master password is inputted correctly
-                            do {
-                                try {
-                                    Scanner input = new Scanner(System.in);
-                                    check = true; // by default input is valid
+                        // loop until master password is inputted correctly
+                        do {
+                            try {
+                                Scanner input = new Scanner(System.in);
+                                check = true; // by default input is valid
 
-                                    masterPasword = input.nextLine();
-                                    input.nextLine();
+                                masterPasword = input.nextLine();
+                                input.nextLine();
 
-                                    // if master password is not correct, request input again
-                                    if (masterPasword.compareTo(rSmpass.getString(1)) != 0) {
-                                        check = false;
-                                        System.out.println("Master Password is incorrect, try again! ");
-                                    }
-
-                                } catch (InputMismatchException ex) {
+                                // if master password is not correct, request input again
+                                if (masterPasword.compareTo(rSmpass.getString(1)) != 0) {
                                     check = false;
-                                    System.out.println("Please input master password as a number! ");
-                                } catch (Exception ex) {
-                                    check = false;
-                                    System.out.println("An error occured! Please try again later! ");
+                                    System.out.println("Master Password is incorrect, try again! ");
                                 }
-                            } while (!check);
+
+                            } catch (InputMismatchException ex) {
+                                check = false;
+                                System.out.println("Please input master password as a number! ");
+                            } catch (Exception ex) {
+                                check = false;
+                                System.out.println("An error occured! Please try again later! ");
+                            }
+                        } while (!check);
                     }
                 }
                 // assign current info to temp variables
@@ -1279,9 +1298,10 @@ class adminMenu extends Menu {
             System.out.println("4. Change the number of last transactions to display");
             System.out.println("5. Create deposit report");
             System.out.println("6. Create withdrawal report");
-            System.out.println("7. Change user info");
-            System.out.println("8. Change current account's password");
-            System.out.println("9. Exit");
+            System.out.println("7. Create account report");
+            System.out.println("8. Change user info");
+            System.out.println("9. Change current account's password");
+            System.out.println("10. Exit");
             System.out.print("Input your choice: ");
 
             // loop until choice is correctly inputted
@@ -1337,18 +1357,22 @@ class adminMenu extends Menu {
                     createWithdrawReport();
 
                     break;
-
                 case 7:
+                    createAccountReport();
+                    
+                    break;
+                
+                case 8:
                     changeUserInfo();
 
                     break;
 
-                case 8:
+                case 9:
                     changePassword(user);
 
                     break;
 
-                case 9:
+                case 10:
                     System.out.println("Exiting... Thank you for using our service!! ");
 
             }
